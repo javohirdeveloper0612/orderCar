@@ -57,30 +57,11 @@ public class MainService {
                         "Hozircha yordam mavjud emas"));
     }
 
-    public void priceData(Message message) {
-        myTelegramBot.send(
-                SendMsg.sendMsg(message.getChatId(), "Price data ishladi")
-        );
-    }
 
-    public void documentData(Message message) {
-        myTelegramBot.send(
-                SendMsg.sendMsg(message.getChatId(), "Документ меню",
-                        Button.markup(
-                                Button.rowList(Button.row(
-                                                Button.button(ButtonName.dataVoditel),
-                                                Button.button(ButtonName.dataCar)
-                                        ),
-                                        Button.row(Button.button(ButtonName.backTransportMenu))
-                                )))
-        );
-    }
 
-    public void orderCar(Message message) {
-        myTelegramBot.send(
-                SendMsg.sendMsg(message.getChatId(), "order car data ishladi")
-        );
-    }
+
+
+
 
     public void dataCar(Message message) {
         myTelegramBot.send(

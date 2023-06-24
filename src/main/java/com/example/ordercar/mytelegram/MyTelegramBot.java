@@ -1,6 +1,7 @@
 package com.example.ordercar.mytelegram;
 
 import com.example.ordercar.config.BotConfig;
+import com.example.ordercar.controller.CallbackController;
 import com.example.ordercar.controller.MainController;
 import com.example.ordercar.util.SendMsg;
 import org.springframework.context.annotation.Lazy;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -18,26 +18,24 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
     private final BotConfig botConfig;
     private final MainController mainController;
+    private final CallbackController callbackController;
 
     @Lazy
-    public MyTelegramBot(BotConfig botConfig, MainController mainController) {
+    public MyTelegramBot(BotConfig botConfig, MainController mainController, CallbackController callbackController) {
         this.botConfig = botConfig;
         this.mainController = mainController;
+        this.callbackController = callbackController;
     }
 
 
     @Override
     public void onUpdateReceived(Update update) {
 
-        if (update.hasMessage() && update.getMessage().hasText()) {
+        if (update.hasMessage()) {
             mainController.handler(update.getMessage());
         } else if (update.hasCallbackQuery()) {
-            Message message = update.getCallbackQuery().getMessage();
-            switch (update.getCallbackQuery().getData()) {
-                case "view_loc" -> send(SendMsg.sendLocation(message.getChatId(), message.getMessageId()));
-                case "" -> {
-                }
-            }
+            callbackController.handler(update);
+
         }
     }
 
