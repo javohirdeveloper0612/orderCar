@@ -1,7 +1,8 @@
 package com.example.ordercar.mytelegram;
 
 import com.example.ordercar.config.BotConfig;
-import com.example.ordercar.util.SendMsg;
+import com.example.ordercar.controller.MainController;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -13,17 +14,20 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class MyTelegramBot extends TelegramLongPollingBot {
 
     private final BotConfig botConfig;
+    private final MainController mainController;
 
-    public MyTelegramBot(BotConfig botConfig) {
+    @Lazy
+    public MyTelegramBot(BotConfig botConfig, MainController mainController) {
         this.botConfig = botConfig;
+        this.mainController = mainController;
     }
 
 
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
-        if (message.getText().equals("/start")) {
-            send(SendMsg.sendMsgParse(message.getChatId(), "Nima gapla mazgi"));
+        if (update.hasMessage()) {
+            mainController.handler(message);
         }
     }
 
