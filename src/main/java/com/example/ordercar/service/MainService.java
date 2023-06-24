@@ -3,6 +3,7 @@ package com.example.ordercar.service;
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.util.Button;
 import com.example.ordercar.util.ButtonName;
+import com.example.ordercar.util.InlineButton;
 import com.example.ordercar.util.SendMsg;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,8 @@ public class MainService {
                 Button.markup(
                         Button.rowList(
                                 Button.row(Button.button(ButtonName.transportusluga), Button.button(ButtonName.metallprokat)),
-                                Button.row(Button.button(ButtonName.metallBuyum), Button.button("?"))
+                                Button.row(Button.button(ButtonName.metallBuyum), Button.button(ButtonName.contact)),
+                                Button.row(Button.button(ButtonName.location))
                         ))));
     }
 
@@ -90,6 +92,25 @@ public class MainService {
         myTelegramBot.send(
                 SendMsg.sendMsg(message.getChatId(), "Data Voditel  data ishladi")
         );
+    }
+
+    public void contact(Message message) {
+      myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
+              "*Свяжитесь с нами сейчас! Телефоны для связи : *" +
+                      "\n+998932235432" +
+                      "\n+998932235432"));
+    }
+
+    public void location(Message message) {
+        myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
+                "Наш адрес: город Салар, Кибрайский район, Ташкентская область ...",
+                InlineButton.keyboardMarkup(
+                        InlineButton.rowList(
+                                InlineButton.row(
+                                        InlineButton.button("посмотреть местоположение", "view_loc")
+                                )
+                        )
+                )));
     }
 }
 

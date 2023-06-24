@@ -26,17 +26,14 @@ public class MainController {
 
         var text = message.getText();
         var telegramUsers = saveUser(message.getChatId());
-        switch (text) {
-            case "/start" -> {
-                mainService.mainMenu(message);
-                telegramUsers.setStep(Step.MAIN);
-                return;
-            }
-            case "/help" -> {
-                mainService.help(message);
-                telegramUsers.setStep(Step.MAIN);
-                return;
-            }
+        if (text.equals("/start")) {
+            mainService.mainMenu(message);
+            telegramUsers.setStep(Step.MAIN);
+            return;
+        } else if (text.equals("/help")) {
+            mainService.help(message);
+            telegramUsers.setStep(Step.MAIN);
+            return;
         }
 
         if (telegramUsers.getStep() == null) {
@@ -52,7 +49,8 @@ public class MainController {
                 }
                 case ButtonName.metallBuyum -> mainService.metallBuyumMenu(message);
                 case ButtonName.metallprokat -> mainService.metalProkatMenu(message);
-
+                case ButtonName.contact -> mainService.contact(message);
+                case ButtonName.location -> mainService.location(message);
 
             }
 
@@ -70,7 +68,6 @@ public class MainController {
                     mainService.mainMenu(message);
                     telegramUsers.setStep(Step.MAIN);
                 }
-
 
             }
         }

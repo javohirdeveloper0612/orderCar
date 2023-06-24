@@ -12,4 +12,6 @@ public interface ButtonName {
     String backTransportMenu = "назад  \uD83D\uDD19";
     String dataCar = "транспорт  данные";
     String dataVoditel = "информация о водителе";
+    String contact = "контакт \uD83D\uDCDE";
+    String location = "локация \uD83D\uDCCD";
 }

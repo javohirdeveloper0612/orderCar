@@ -1,11 +1,14 @@
 package com.example.ordercar.util;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 
 
 public class SendMsg {
@@ -25,7 +28,7 @@ public class SendMsg {
         return sendMessage;
     }
 
-    public static SendMessage sendMsg(Long id, String text,  InlineKeyboardMarkup markup) {
+    public static SendMessage sendMsg(Long id, String text, InlineKeyboardMarkup markup) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(id);
         sendMessage.setText(text);
@@ -83,6 +86,15 @@ public class SendMsg {
         sendMessage.setChatId(chatId);
         sendMessage.setParseMode("Markdown");
         return sendMessage;
+    }
+
+    public static SendLocation sendLocation(Long chatId, Integer messageId) {
+        SendLocation sendLocation = new SendLocation();
+        sendLocation.setChatId(chatId);
+        sendLocation.setLatitude(41.37607);
+        sendLocation.setLongitude(69.365975);
+        sendLocation.setReplyToMessageId(messageId);
+        return sendLocation;
     }
 
 
