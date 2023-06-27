@@ -14,7 +14,6 @@ import java.util.List;
 
 @Controller
 public class MainController {
-
     private final MainService mainService;
     private final List<TelegramUsers> usersList = new ArrayList<>();
 
@@ -30,12 +29,12 @@ public class MainController {
     public void handler(Message message) {
 
         if (message.hasText()) {
-
             var text = message.getText();
             var telegramUsers = saveUser(message.getChatId());
             if (text.equals("/start")) {
                 mainService.mainMenu(message);
                 telegramUsers.setStep(Step.MAIN);
+                transportController.saveUser(message.getChatId()).setStep(null);
                 return;
             } else if (text.equals("/help")) {
                 mainService.help(message);
@@ -47,11 +46,11 @@ public class MainController {
                 telegramUsers.setStep(Step.MAIN);
             }
 
-
             if (telegramUsers.getStep().equals(Step.MAIN)) {
                 switch (message.getText()) {
                     case ButtonName.transportusluga -> {
-                        transportController.handler(message);
+                        mainService.transportMenu(message);
+                        telegramUsers.setStep(Step.TRANSPORT);
                     }
                     case ButtonName.metallBuyum -> {
                         //metalbuyumcontroller
@@ -70,9 +69,14 @@ public class MainController {
 
                 }
 
+            } else if (telegramUsers.getStep().equals(Step.TRANSPORT)) {
+                transportController.handler(message);
+
             }
-
-
+        } else if (message.hasContact()) {
+            transportController.handler(message);
+        } else if (message.hasLocation()) {
+            transportController.handler(message);
         }
     }
 
