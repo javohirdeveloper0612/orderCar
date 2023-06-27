@@ -32,6 +32,7 @@ public class SendMsg {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(id);
         sendMessage.setText(text);
+        sendMessage.setParseMode("Markdown");
         sendMessage.setReplyMarkup(markup);
         return sendMessage;
     }
@@ -64,7 +65,6 @@ public class SendMsg {
         document.setCaption(text);
         return document;
     }
-
 
 
     public static SendMessage sendMsgParse(Long chatId, String text) {

@@ -32,7 +32,8 @@ public class TransportUslugaService {
 
     public void orderCar(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Iltimos telefon raqamingizni qoldiring*",
+                "*Iltimos telefon raqamingizni quyidagi shakilda kiriting : " +
+                        "\nMasalan : +998901234567 ✅*",
                 ButtonUtil.getContact()));
     }
 

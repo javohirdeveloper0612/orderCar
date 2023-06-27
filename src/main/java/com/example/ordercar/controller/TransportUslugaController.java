@@ -89,8 +89,10 @@ public class TransportUslugaController {
                     }
                 }
                 case GETPHONE -> {
-                    sendSmsCode(message);
-                    transportStep.setStep(Step.CHECKSMS);
+                    if (checkPhone(message)) {
+                        sendSmsCode(message);
+                        transportStep.setStep(Step.CHECKSMS);
+                    }
                 }
                 case CHECKSMS -> {
                     if (checkSmsCode(message)) {
@@ -107,15 +109,36 @@ public class TransportUslugaController {
                 }
 
                 case PAYMENT -> orderClientService.getPayment(message);
+                case GETTOWHERELOCATION -> {
+                    getToWhereLocation(message);
+                }
+
+                case GETFROMWHERELOCATION -> {
+                    getFromWhereLocation(message);
+                }
 
             }
         } else if (message.hasContact()) {
             sendContact(message);
             transportStep.setStep(Step.CHECKSMS);
         } else if (message.hasLocation()) {
-            orderClient.setFromWhere(getCurrentLocation(message));
-            getPayment(message);
+            if (transportStep.getStep().equals(Step.GETTOWHERELOCATION)) {
+                orderClient.setToWhere(getCurrentLocation(message));
+                transportStep.setStep(null);
+                getPayment(message);
+            } else {
+                orderClient.setFromWhere(getCurrentLocation(message));
+                getToWhereLocation(message);
+                saveUser(message.getChatId()).setStep(Step.GETTOWHERELOCATION);
+            }
+
+
         }
+    }
+
+    private void getToWhereLocation(Message message) {
+        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
+                "*Mashina qayerga boradi ? Iltimos locatsiya ulashing !*"));
     }
 
     private void getPayment(Message message) {
@@ -128,7 +151,7 @@ public class TransportUslugaController {
                         InlineButton.row(InlineButton.button("\uD83D\uDFE2  HUMO KARTA", "humo")),
                         InlineButton.row(InlineButton.button("\uD83D\uDFE2  UZUM", "uzum")),
                         InlineButton.row(InlineButton.button("\uD83D\uDFE2  NAQD PUL", "naqd")),
-                        InlineButton.row(InlineButton.button("back\uD83D\uDD19", "back"))
+                        InlineButton.row(InlineButton.button("ORQAGA \uD83D\uDD19", "back"))
                 ))));
     }
 
@@ -154,11 +177,16 @@ public class TransportUslugaController {
             transportService.replyStart(message.getChatId());
 
         } else {
+            getFromWhereLocation(message);
+            saveUser(message.getChatId()).setStep(Step.GETFROMWHERELOCATION);
             orderClient.setOrderDate(localDate);
-            myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(), "*Mashina qayerda yo'lga chiqadi ? Iltimos locatsiya ulashing !*",
-                    orderClientService.getLocation()));
-            saveUser(message.getChatId()).setStep(null);
         }
+    }
+
+    public void getFromWhereLocation(Message message) {
+        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(), "*Mashina qayerdan yo'lga chiqadi ? Iltimos locatsiya ulashing !*",
+                orderClientService.getLocation()));
+
     }
 
     public TelegramUsers saveUser(Long chatId) {
@@ -180,9 +208,8 @@ public class TransportUslugaController {
         orderClient.setPhone(phone);
         SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(phone), randomNumber);
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                phone + " ushbu raqamga tasdiqlash kodi yuborildi !" +
-                        "\nIltimos tasdiqlash kodini kiriting"));
-
+                "*" + phone + "*" + "* ushbu raqamga tasdiqlash kodi yuborildi !*" +
+                        "*\nIltimos tasdiqlash kodini kiriting  ✅*"));
     }
 
 
@@ -194,32 +221,59 @@ public class TransportUslugaController {
         orderClient.setChatId(message.getChatId());
         SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(phone), randomNumber);
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                phone + " ushbu raqamga tasdiqlash kodi yuborildi !" +
-                        "\nIltimos tasdiqlash kodini kiriting"));
+                "*" + phone + "*" + "* ushbu raqamga tasdiqlash kodi yuborildi !*" +
+                        "*\nIltimos tasdiqlash kodini kiriting  ✅*"));
 
     }
 
     public void getCash(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                 "*Buyurtmangiz qabul qilindi ! Tez orada mutaxasislarimisz siz bilan boglanadi*"));
-        orderClient.setCashOrOnline(Payment.CASH);
+        orderClient.setCashOrOnline(Payment.NAQD);
         orderClient.setStatus(ProfileStatus.ACTIVE);
         saveUser(message.getChatId()).setStep(null);
-        oderClientRepository.save(orderClient);
-        sendOrder(message);
+        OrderClientEntity save = oderClientRepository.save(orderClient);
         orderClient = new OrderClientEntity();
+        sendOrder(message, save);
+
     }
 
-    public void sendOrder(Message message) {
-        myTelegramBot.send(SendMsg.sendMsgParse(1030035146L,
-                "Buyurtma : \n" +
-                        "ISM VA FAMILIYA : " + orderClient.getFullName() + "" +
-                        "\nTELEFON RAQAM : " + orderClient.getPhone() + "" +
-                        "\nBuyurtma sanasi : " + orderClient.getOrderDate() + "" +
-                        "\nStatus : " + orderClient.getStatus() + "" +
-                        "\nTo'lov turi : " + orderClient.getCashOrOnline()));
+    public void sendOrder(Message message, OrderClientEntity save) {
+        myTelegramBot.send(SendMsg.sendMsg(1030035146L,
+                "\t*>>>>>>>>>>>>>>>>>>Buyurtma<<<<<<<<<<<<<<<<<<* \n" +
+                        "\n*Buyurtma ID : * " + save.getId() +
+                        "" +
+                        "\n*ISM VA FAMILIYA : * " + save.getFullName() + "" +
+                        "\n*TELEFON RAQAM : * " + save.getPhone() + "" +
+                        "\n*Buyurtma sanasi : * " + save.getOrderDate() + "" +
+                        "\n*Status :* " + save.getStatus() + "" +
+                        "\n*To'lov turi : * " + save.getCashOrOnline(),
+                InlineButton.keyboardMarkup(InlineButton.rowList(
+                        InlineButton.row(InlineButton.button("zakasni tugatish ✅", "zakas")),
+                        InlineButton.row(InlineButton.button("Mashina chiqadigan manzil \uD83D\uDCCD", "loc1")),
+                        InlineButton.row(InlineButton.button("Mashina boradigan manzil \uD83D\uDCCD", "loc2"))))));
 
-        myTelegramBot.send(SendMsg.sendLocation(orderClient.getFromWhere()));
 
+    }
+
+    public boolean checkPhone(Message message) {
+
+        if (!message.getText().startsWith("+998") || message.getText().length() != 13) {
+            myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
+                    "*Iltimos telefon raqamni quyidagi ko'rinishda kiriting !*" +
+                            "*\nMasalan : +998901234567  ✅*"));
+            return false;
+        }
+
+        for (int i = 0; i < message.getText().length(); i++) {
+            if (Character.isAlphabetic(message.getText().charAt(i))) {
+                myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
+                        "*Iltimos telefon raqamni quyidagi ko'rinishda kiriting !*" +
+                                "*\nMasalan : +998901234567  ✅*"));
+                return false;
+            }
+        }
+
+        return true;
     }
 }

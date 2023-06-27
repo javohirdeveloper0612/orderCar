@@ -14,11 +14,10 @@ import java.time.LocalDate;
 public class CallBackService {
     private final CalendarUtil calendarUtil;
     private final MyTelegramBot myTelegramBot;
-    private final MainService mainService;
 
-    public CallBackService(MyTelegramBot myTelegramBot, MainService mainService) {
+
+    public CallBackService(MyTelegramBot myTelegramBot) {
         this.myTelegramBot = myTelegramBot;
-        this.mainService = mainService;
         calendarUtil = new CalendarUtil();
     }
 
@@ -47,19 +46,19 @@ public class CallBackService {
 
     public void getClick(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "Hozircha botimiz Clickni qo'llab quvvatlamaydi"));
+                "*Hozircha botimiz Clickni qo'llab quvvatlamaydi*"));
 
 
     }
 
     public void getHumo(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "Hozircha botimiz Humoni qo'llab quvvatlamaydi"));
+                "*Hozircha botimiz Humoni qo'llab quvvatlamaydi*"));
     }
 
     public void getUzum(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "Hozircha botimiz Uzumni qo'llab quvvatlamaydi"));
+                "*Hozircha botimiz Uzumni qo'llab quvvatlamaydi*"));
 
     }
 

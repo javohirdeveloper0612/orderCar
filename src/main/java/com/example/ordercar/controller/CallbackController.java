@@ -20,18 +20,20 @@ public class CallbackController {
     private final CallBackService callBackService;
     private final TransportUslugaController uslugaController;
     private final MainService mainService;
+    private final MainController mainController;
 
 
     @Lazy
     public CallbackController(MyTelegramBot myTelegramBot,
                               CallBackService callBackService,
-                              TransportUslugaController uslugaController, MainService mainService) {
+                              TransportUslugaController uslugaController, MainService mainService, MainController mainController) {
         this.myTelegramBot = myTelegramBot;
 
         this.callBackService = callBackService;
         this.uslugaController = uslugaController;
 
         this.mainService = mainService;
+        this.mainController = mainController;
     }
 
     public void handler(Update update) {
@@ -43,9 +45,18 @@ public class CallbackController {
                 myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), message.getMessageId()));
                 return;
             }
+
+            case "loc1" -> {
+
+            }
+
+            case "loc2" -> {
+
+            }
             case "back" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 mainService.mainMenu(message);
+                mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
             }
             case "payme" -> {
                 callBackService.getPayMe(message);
@@ -55,22 +66,29 @@ public class CallbackController {
             case "click" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 callBackService.getClick(message);
+                mainService.mainMenu(message);
+                mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
 
             }
             case "humo" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 callBackService.getHumo(message);
+                mainService.mainMenu(message);
+                mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
 
             }
             case "uzum" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 callBackService.getUzum(message);
+                mainService.mainMenu(message);
+                mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
 
             }
             case "naqd" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 uslugaController.getCash(message);
-
+                mainService.mainMenu(message);
+                mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
 
             }
         }
