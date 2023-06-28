@@ -10,9 +10,8 @@ public interface ButtonName {
     String document = "документы  \uD83D\uDCC3";
     String backMainMenu = "назад  \uD83D\uDD19";
     String backTransportMenu = "назад  \uD83D\uDD19";
-    String dataCar = "транспорт  данные \uD83D\uDCC4";
-    String dataVoditel = "информация о водителе \uD83D\uDCC4";
-    String contact = "контакт ☎️";
+    String dataCar = "транспорт  данные";
+    String dataVoditel = "информация о водителе";
+    String contact = "контакт \uD83D\uDCDE";
     String location = "локация \uD83D\uDCCD";
-    String setting = "настройки ⚙️";
 }
