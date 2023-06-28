@@ -8,10 +8,15 @@ import com.example.ordercar.util.SendMsg;
 import com.example.ordercar.util.Step;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class CallbackController {
@@ -89,6 +94,13 @@ public class CallbackController {
                 uslugaController.getCash(message);
                 mainService.mainMenu(message);
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
+            }
+            case "payment" -> {
+
+
+            }
+
+            case "claim" -> {
 
             }
         }
@@ -106,5 +118,16 @@ public class CallbackController {
         }
     }
 
-
+    private InlineKeyboardMarkup getInlineKeyboardMarkup() {
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText("Havolaga o'tish");
+        inlineKeyboardButton.setUrl("https://www.example.com");
+        rows.add(row);
+        markup.setKeyboard(rows);
+        return markup;
+    }
 }
+

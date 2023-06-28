@@ -46,20 +46,19 @@ public class MainService {
 
     public void metallBuyumMenu(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "Metall buyum ishladi"));
+                "*Ushbu funksiya tez orada ishga tushadi *"));
     }
 
     public void metalProkatMenu(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "metall prokat usluga ishladi"));
+                "*Ushbu funksiya tez orada ishga tushadi prokat *"));
     }
 
     public void help(Message message) {
         myTelegramBot.send(
                 SendMsg.sendMsgParse(message.getChatId(),
-                        "Hozircha yordam mavjud emas"));
+                        "*Ushbu funksiya tez orada ishga tushadi*"));
     }
-
 
     public void dataCar(Message message) {
         myTelegramBot.send(
@@ -70,7 +69,7 @@ public class MainService {
 
     public void dataVoditel(Message message) {
         myTelegramBot.send(
-                SendMsg.sendMsg(message.getChatId(), "Data Voditel  data ishladi")
+                SendMsg.sendMsg(message.getChatId(), "*Ushbu funksiya tez orada isha tushadi*")
         );
     }
 
@@ -99,6 +98,12 @@ public class MainService {
                                 )
                         )
                 )));
+    }
+
+    public void setting(Message message) {
+        myTelegramBot.send(
+                SendMsg.sendMsg(message.getChatId(), "*Ushbu funksiya tez orada isha tushadi*")
+        );
     }
 }
 

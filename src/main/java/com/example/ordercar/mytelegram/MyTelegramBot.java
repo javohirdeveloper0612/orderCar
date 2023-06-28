@@ -37,7 +37,6 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             mainController.handler(update.getMessage());
         } else if (update.hasCallbackQuery()) {
             callbackController.handler(update);
-
         }
     }
 

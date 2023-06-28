@@ -24,6 +24,7 @@ public class SendMsg {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(id);
         sendMessage.setText(text);
+        sendMessage.setParseMode("Markdown");
         sendMessage.setReplyMarkup(markup);
         return sendMessage;
     }
