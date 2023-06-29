@@ -1,5 +1,6 @@
 package com.example.ordercar.util;
 
+import com.example.ordercar.entity.LocationClient;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,6 +15,14 @@ public class SendMsg {
     public static SendMessage sendMsg(Long id, String text) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(id);
+        sendMessage.setText(text);
+        sendMessage.setParseMode("Markdown");
+        return sendMessage;
+    }
+    public static SendMessage sendMsg(Long id, String text,Integer messageId) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(id);
+        sendMessage.setReplyToMessageId(messageId);
         sendMessage.setText(text);
         sendMessage.setParseMode("Markdown");
         return sendMessage;
@@ -66,11 +75,12 @@ public class SendMsg {
         return document;
     }
 
-    public static SendDocument sendDocument(Long id, InputFile inputFile) {
-        SendDocument document = new SendDocument();
-        document.setDocument(inputFile);
-        document.setChatId(id);
-        return document;
+    public static SendDocument sendDoc(Long id, InputFile inputFile) {
+
+        SendDocument sendDocument = new SendDocument();
+        sendDocument.setChatId(id);
+        sendDocument.setDocument(inputFile);
+        return sendDocument;
     }
 
     public static SendMessage sendMsgParse(Long chatId, String text) {
@@ -90,6 +100,21 @@ public class SendMsg {
         return sendLocation;
     }
 
+    public static SendLocation sendLocation(LocationClient location) {
+        SendLocation sendLocation = new SendLocation();
+        sendLocation.setChatId(1030035146L);
+        sendLocation.setLatitude(location.getLatitude());
+        sendLocation.setLongitude(location.getLongitude());
+        return sendLocation;
+    }
+    public static SendLocation sendLocation(Long id ,LocationClient location,Integer messageId) {
+        SendLocation sendLocation = new SendLocation();
+        sendLocation.setChatId(id);
+        sendLocation.setLatitude(location.getLatitude());
+        sendLocation.setLongitude(location.getLongitude());
+        sendLocation.setReplyToMessageId(messageId);
+        return sendLocation;
+    }
 
     public static EditMessageText sendMsgParseEdite(Long chatId, String text, Integer messageId) {
         EditMessageText sendMessage = new EditMessageText();
@@ -106,6 +131,16 @@ public class SendMsg {
         deleteMessage.setMessageId(messageId);
         deleteMessage.setChatId(chatId);
         return deleteMessage;
+    }
+
+    public static EditMessageText editMessage(Long chatId, String text, InlineKeyboardMarkup markup,Integer messageId){
+        EditMessageText editMessageText = new EditMessageText();
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(messageId);
+        editMessageText.setText(text);
+        editMessageText.setReplyMarkup(markup);
+
+        return editMessageText;
     }
 
 }

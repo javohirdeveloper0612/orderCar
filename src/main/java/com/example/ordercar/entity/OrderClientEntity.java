@@ -1,7 +1,7 @@
 package com.example.ordercar.entity;
 
 import com.example.ordercar.enums.Payment;
-import com.example.ordercar.enums.ProfileStatus;
+import com.example.ordercar.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Entity
+@Entity(name = "order_client")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -48,7 +48,7 @@ public class OrderClientEntity {
     private Payment payment;
 
     @Enumerated(EnumType.STRING)
-    private ProfileStatus status;
+    private Status status;
 
 
 }

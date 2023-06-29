@@ -3,13 +3,18 @@ package com.example.ordercar.controller;
 
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.service.CallBackService;
+import com.example.ordercar.service.DriverService;
 import com.example.ordercar.service.MainService;
 import com.example.ordercar.util.SendMsg;
 import com.example.ordercar.util.Step;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputLocationMessageContent;
 
 import java.time.LocalDate;
 
@@ -22,11 +27,13 @@ public class CallbackController {
     private final MainService mainService;
     private final MainController mainController;
 
+    private final DriverService driverService;
+
 
     @Lazy
     public CallbackController(MyTelegramBot myTelegramBot,
                               CallBackService callBackService,
-                              TransportUslugaController uslugaController, MainService mainService, MainController mainController) {
+                              TransportUslugaController uslugaController, MainService mainService, MainController mainController, DriverService driverService) {
         this.myTelegramBot = myTelegramBot;
 
         this.callBackService = callBackService;
@@ -34,24 +41,36 @@ public class CallbackController {
 
         this.mainService = mainService;
         this.mainController = mainController;
+        this.driverService = driverService;
     }
 
     public void handler(Update update) {
 
         Message message = update.getCallbackQuery().getMessage();
         String query = update.getCallbackQuery().getData();
-        switch (query) {
+
+        String[] parts = query.split("#");
+        long locationId = 0;
+        if (parts.length >= 2) {
+           locationId = Long.parseLong(parts[1]);
+        }
+
+        switch (parts[0]) {
             case "view_loc" -> {
                 myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), message.getMessageId()));
                 return;
             }
 
-            case "loc1" -> {
+            case "finish_order" ->{
+                driverService.finishOrder(message,locationId,message.getMessageId());
+            }
 
+            case "loc1" -> {
+                driverService.getFromWhere(message, locationId,message.getMessageId());
             }
 
             case "loc2" -> {
-
+                driverService.getToWhere(message, locationId,message.getMessageId());
             }
             case "back" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));

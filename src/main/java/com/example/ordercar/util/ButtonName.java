@@ -15,4 +15,8 @@ public interface ButtonName {
     String contact = "контакт ☎️";
     String location = "локация \uD83D\uDCCD";
     String setting = "настройки ⚙️";
+
+    String activeOrder = "Tugatilmagan Buyurtmalar ⌚";
+    String notActiveOrder = "Tugatilgan Buyurtmalar ✅";
+
 }
