@@ -2,10 +2,13 @@ package com.example.ordercar.controller;
 
 import com.example.ordercar.entity.LocationClient;
 import com.example.ordercar.entity.OrderClientEntity;
+import com.example.ordercar.entity.ProfileEntity;
 import com.example.ordercar.enums.Payment;
+import com.example.ordercar.enums.ProfileRole;
 import com.example.ordercar.enums.ProfileStatus;
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.repository.OderClientRepository;
+import com.example.ordercar.repository.ProfileRepository;
 import com.example.ordercar.service.MainService;
 import com.example.ordercar.service.OrderClientService;
 import com.example.ordercar.service.TransportUslugaService;
@@ -29,6 +32,7 @@ public class TransportUslugaController {
     final OrderClientService orderClientService;
     private final OderClientRepository oderClientRepository;
     private final MyTelegramBot myTelegramBot;
+    private final ProfileRepository profileRepository;
 
 
     @Autowired
@@ -37,7 +41,7 @@ public class TransportUslugaController {
                                      TransportUslugaService transportService,
                                      OrderClientService orderClientService,
                                      OderClientRepository oderClientRepository,
-                                     MyTelegramBot myTelegramBot) {
+                                     MyTelegramBot myTelegramBot, ProfileRepository profileRepository) {
         this.mainService = mainService;
         this.mainController = mainController;
         this.transportService = transportService;
@@ -46,6 +50,7 @@ public class TransportUslugaController {
         this.myTelegramBot = myTelegramBot;
 
 
+        this.profileRepository = profileRepository;
     }
 
 
@@ -163,11 +168,8 @@ public class TransportUslugaController {
                 "*Iltimos o'zingizga qulay bo'lgan to'lov tizimini tanlang*",
                 InlineButton.keyboardMarkup(InlineButton.rowList(
                         InlineButton.row(InlineButton.button("\uD83D\uDFE2  PAYME(Avto to'lov)", "payme")),
-                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  CLICK", "click")),
-                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  HUMO KARTA", "humo")),
-                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  UZUM", "uzum")),
                         InlineButton.row(InlineButton.button("\uD83D\uDFE2  NAQD PUL", "naqd")),
-                        InlineButton.row(InlineButton.button("ORQAGA \uD83D\uDD19", "back"))
+                        InlineButton.row(InlineButton.button("⬅️ ORQAGA", "back"))
                 ))));
     }
 
@@ -244,31 +246,50 @@ public class TransportUslugaController {
     public void getCash(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                 "*Buyurtmangiz qabul qilindi ! Tez orada mutaxasislarimisz siz bilan boglanadi*"));
-        orderClient.setCashOrOnline(Payment.NAQD);
+        orderClient.setPayment(Payment.NAQD);
         orderClient.setStatus(ProfileStatus.ACTIVE);
         saveUser(message.getChatId()).setStep(null);
         OrderClientEntity save = oderClientRepository.save(orderClient);
         orderClient = new OrderClientEntity();
-        sendOrder(message, save);
-
+        sendOrder(save);
     }
 
-    public void sendOrder(Message message, OrderClientEntity save) {
-        myTelegramBot.send(SendMsg.sendMsg(1024661550L,
-                "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
+    public void sendOrder(OrderClientEntity save) {
+        var list = profileRepository.findAllByRole(ProfileRole.VODITEL);
+        if (list.isEmpty()) {
+            return;
+        }
+        for (ProfileEntity entity : list) {
+            sendDataToDriver(entity, save);
+            sendSms(save, entity);
+        }
+    }
+
+    public void sendDataToDriver(ProfileEntity entity, OrderClientEntity save) {
+        myTelegramBot.send(SendMsg.sendMsg(entity.getChatId(),
+                "*>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
                         "\n*Buyurtma ID : * " + save.getId() +
                         "" +
                         "\n*ISM VA FAMILIYA : * " + save.getFullName() + "" +
-                        "\n*TELEFON RAQAM : * " + save.getPhone() + "" +
-                        "\n*Buyurtma sanasi : * " + save.getOrderDate() + "" +
-                        "\n*Status :* " + save.getStatus() + "" +
-                        "\n*To'lov turi : * " + save.getCashOrOnline(),
+                        "\n*TELEFON RAQAMI : * " + save.getPhone() + "" +
+                        "\n*BUYURTMA SANASI : * " + save.getOrderDate() + "" +
+                        "\n*STATUS :* " + save.getStatus() + "" +
+                        "\n*TO'LOV TURI: * " + save.getPayment(),
                 InlineButton.keyboardMarkup(InlineButton.rowList(
                         InlineButton.row(InlineButton.button("zakasni tugatish ✅", "zakas")),
                         InlineButton.row(InlineButton.button("Mashina chiqadigan manzil \uD83D\uDCCD", "loc1")),
                         InlineButton.row(InlineButton.button("Mashina boradigan manzil \uD83D\uDCCD", "loc2"))))));
+    }
 
 
+    public void sendSms(OrderClientEntity orderClient, ProfileEntity entity) {
+        SmsServiceUtil.sendSmsOrder(SmsServiceUtil.removePlusSign(entity.getPhone()),
+                ">>>>>>>>>>>Buyurtma<<<<<<<<<<<\n" +
+                        "\nISMI VA FAMILIYASI : " + orderClient.getFullName() + " " +
+                        "\nTELEFON RAQAMI : " + orderClient.getPhone() + " " +
+                        "\nBUYURTMA SANASI : " + orderClient.getOrderDate() + " " +
+                        "\nSTATUS :" + orderClient.getStatus() + " " +
+                        "\nTO'LOV TURI : " + orderClient.getPayment());
     }
 
     public boolean checkPhone(Message message) {

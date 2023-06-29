@@ -1,5 +1,6 @@
 package com.example.ordercar.mytelegram;
 
+import com.example.ordercar.admin.controller.AdminController;
 import com.example.ordercar.config.BotConfig;
 import com.example.ordercar.controller.CallbackController;
 import com.example.ordercar.controller.MainController;
@@ -11,6 +12,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -20,23 +22,40 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private final BotConfig botConfig;
     private final MainController mainController;
     private final CallbackController callbackController;
+    private final AdminController adminController;
 
     @Lazy
     public MyTelegramBot(BotConfig botConfig, MainController mainController,
-                         CallbackController callbackController) {
+                         CallbackController callbackController, AdminController adminController) {
         this.botConfig = botConfig;
         this.mainController = mainController;
         this.callbackController = callbackController;
+        this.adminController = adminController;
     }
 
 
     @Override
     public void onUpdateReceived(Update update) {
 
+
         if (update.hasMessage()) {
-            mainController.handler(update.getMessage());
+            Message message = update.getMessage();
+            if (message.getChatId() == 1030035146L) {
+                adminController.handle(update);
+            } else {
+                mainController.handler(message);
+            }
+
         } else if (update.hasCallbackQuery()) {
-            callbackController.handler(update);
+            Message message = update.getCallbackQuery().getMessage();
+            if (message.getChatId() == 1030035146L) {
+                adminController.handle(update);
+            } else {
+                callbackController.handler(update);
+            }
+
+
+
         }
     }
 

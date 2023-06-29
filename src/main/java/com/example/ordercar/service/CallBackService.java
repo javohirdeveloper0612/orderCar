@@ -49,7 +49,6 @@ public class CallBackService {
                 "*Hozircha botimiz Clickni qo'llab quvvatlamaydi *" +
                         " *Tez orada ushbu funksiya ishga tushadi *"));
 
-
     }
 
     public void getHumo(Message message) {

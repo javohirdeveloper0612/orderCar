@@ -1,6 +1,5 @@
 package com.example.ordercar.util;
 
-import com.example.ordercar.entity.LocationClient;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -67,6 +66,12 @@ public class SendMsg {
         return document;
     }
 
+    public static SendDocument sendDocument(Long id, InputFile inputFile) {
+        SendDocument document = new SendDocument();
+        document.setDocument(inputFile);
+        document.setChatId(id);
+        return document;
+    }
 
     public static SendMessage sendMsgParse(Long chatId, String text) {
         SendMessage sendMessage = new SendMessage();
@@ -85,13 +90,6 @@ public class SendMsg {
         return sendLocation;
     }
 
-    public static SendLocation sendLocation(LocationClient location) {
-        SendLocation sendLocation = new SendLocation();
-        sendLocation.setChatId(1030035146L);
-        sendLocation.setLatitude(location.getLatitude());
-        sendLocation.setLongitude(location.getLongitude());
-        return sendLocation;
-    }
 
     public static EditMessageText sendMsgParseEdite(Long chatId, String text, Integer messageId) {
         EditMessageText sendMessage = new EditMessageText();
