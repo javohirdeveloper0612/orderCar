@@ -97,7 +97,6 @@ public class CallbackController {
             }
             case "payment" -> {
 
-
             }
 
             case "claim" -> {
@@ -118,16 +117,6 @@ public class CallbackController {
         }
     }
 
-    private InlineKeyboardMarkup getInlineKeyboardMarkup() {
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        List<InlineKeyboardButton> row = new ArrayList<>();
-        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-        inlineKeyboardButton.setText("Havolaga o'tish");
-        inlineKeyboardButton.setUrl("https://www.example.com");
-        rows.add(row);
-        markup.setKeyboard(rows);
-        return markup;
-    }
+
 }
 
