@@ -46,19 +46,22 @@ public class CallBackService {
 
     public void getClick(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Hozircha botimiz Clickni qo'llab quvvatlamaydi*"));
+                "*Hozircha botimiz Clickni qo'llab quvvatlamaydi *" +
+                        " *Tez orada ushbu funksiya ishga tushadi *"));
 
 
     }
 
     public void getHumo(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Hozircha botimiz Humoni qo'llab quvvatlamaydi*"));
+                "*Hozircha botimiz Humoni qo'llab quvvatlamaydi.*" +
+                        " * Tez orada ushbu funksiya ishga tushadi *"));
     }
 
     public void getUzum(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Hozircha botimiz Uzumni qo'llab quvvatlamaydi*"));
+                "*Hozircha botimiz Uzumni qo'llab quvvatlamaydi.*" +
+                        " * Tez orada ushbu funksiya ishga tushadi *"));
 
     }
 

@@ -108,7 +108,11 @@ public class TransportUslugaController {
                     transportService.replyStart(message.getChatId());
                 }
 
-                case PAYMENT -> orderClientService.getPayment(message);
+                case PAYMENT -> {
+                    if (checkMoney(message)) {
+                        orderClientService.getPayment(message);
+                    }
+                }
                 case GETTOWHERELOCATION -> {
                     getToWhereLocation(message);
                 }
@@ -142,9 +146,8 @@ public class TransportUslugaController {
     }
 
     private void getPayment(Message message) {
-        System.out.println("Mazgi");
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "Iltimos o'zingizga qulay bo'lgan to'lov tizimini tanlang",
+                "*Iltimos o'zingizga qulay bo'lgan to'lov tizimini tanlang*",
                 InlineButton.keyboardMarkup(InlineButton.rowList(
                         InlineButton.row(InlineButton.button("\uD83D\uDFE2  PAYME(Avto to'lov)", "payme")),
                         InlineButton.row(InlineButton.button("\uD83D\uDFE2  CLICK", "click")),
@@ -184,8 +187,7 @@ public class TransportUslugaController {
     }
 
     public void getFromWhereLocation(Message message) {
-        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(), "*Mashina qayerdan yo'lga chiqadi ? Iltimos locatsiya ulashing !*",
-                orderClientService.getLocation()));
+        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(), "*Mashina qayerdan yo'lga chiqadi ? Iltimos locatsiya ulashing !*"));
 
     }
 
@@ -239,6 +241,8 @@ public class TransportUslugaController {
     }
 
     public void sendOrder(Message message, OrderClientEntity save) {
+        myTelegramBot.send(SendMsg.sendMsg(5530157790L,
+                "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
         myTelegramBot.send(SendMsg.sendMsg(1024661500L,
                 "\t*>>>>>>>>>>>>>>>>>>Buyurtma<<<<<<<<<<<<<<<<<<* \n" +
                         "\n*Buyurtma ID : * " + save.getId() +
@@ -257,7 +261,6 @@ public class TransportUslugaController {
     }
 
     public boolean checkPhone(Message message) {
-
         if (!message.getText().startsWith("+998") || message.getText().length() != 13) {
             myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
                     "*Iltimos telefon raqamni quyidagi ko'rinishda kiriting !*" +

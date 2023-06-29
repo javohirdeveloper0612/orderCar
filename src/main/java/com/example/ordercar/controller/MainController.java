@@ -67,6 +67,10 @@ public class MainController {
                         mainService.location(message);
                     }
 
+                    case ButtonName.setting -> {
+                        mainService.setting(message);
+                    }
+
                 }
 
             } else if (telegramUsers.getStep().equals(Step.TRANSPORT)) {

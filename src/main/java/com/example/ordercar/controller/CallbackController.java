@@ -89,6 +89,13 @@ public class CallbackController {
                 uslugaController.getCash(message);
                 mainService.mainMenu(message);
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
+            }
+
+            case "payment" -> {
+
+            }
+
+            case "claim" -> {
 
             }
         }
@@ -108,3 +115,4 @@ public class CallbackController {
 
 
 }
+

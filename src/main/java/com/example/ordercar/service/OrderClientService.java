@@ -43,10 +43,14 @@ public class OrderClientService {
 
     public void getPayment(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "⬇️ Quyidagi havola orqali o'tib to'lovni amalga oshiring va ✅ Tekshirish tugmasini bosing:",
+                "*⬇️ Quyidagi havola orqali o'tib to'lovni amalga oshiring va ✅ Tekshirish tugmasini bosing:*",
                 InlineButton.keyboardMarkup(InlineButton.rowList(
                         InlineButton.row(InlineButton.button("▶️ To'lov qilish", "payment")),
-                        InlineButton.row(InlineButton.button("✅ Tekshirish", "claim"))
-                ))));
+                        InlineButton.row(InlineButton.button("✅ Tekshirish", "claim")),
+                        InlineButton.row()
+
+                )))
+
+        );
     }
 }

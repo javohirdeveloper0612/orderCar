@@ -26,7 +26,7 @@ public class TransportUslugaService {
 
     public void priceData(Message message) {
         myTelegramBot.send(
-                SendMsg.sendMsg(message.getChatId(), "Price data ishladi")
+                SendMsg.sendMsg(message.getChatId(), "*Ushbu funksiya tez orada ishga tushadi *")
         );
     }
 
@@ -40,7 +40,8 @@ public class TransportUslugaService {
     public void replyStart(Long chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
-        sendMessage.setText("Iltimos, buyurtma bermoqchi bo'lgan sanani tanlang!");
+        sendMessage.setText("*Iltimos, buyurtma bermoqchi bo'lgan sanani tanlang!*");
+        sendMessage.setParseMode("Markdown");
         sendMessage.setReplyMarkup(calendarUtil.makeYearKeyBoard(LocalDate.now().getYear(), LocalDate.now().getMonthValue()));
         myTelegramBot.send(sendMessage);
     }
@@ -48,7 +49,7 @@ public class TransportUslugaService {
 
     public void documentData(Message message) {
         myTelegramBot.send(
-                SendMsg.sendMsg(message.getChatId(), "Документ меню",
+                SendMsg.sendMsg(message.getChatId(), "*Документ меню*",
                         Button.markup(
                                 Button.rowList(Button.row(
                                                 Button.button(ButtonName.dataVoditel),
