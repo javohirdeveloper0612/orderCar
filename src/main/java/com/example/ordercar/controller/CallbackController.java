@@ -8,15 +8,10 @@ import com.example.ordercar.util.SendMsg;
 import com.example.ordercar.util.Step;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class CallbackController {
@@ -95,6 +90,7 @@ public class CallbackController {
                 mainService.mainMenu(message);
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
             }
+
             case "payment" -> {
 
             }
