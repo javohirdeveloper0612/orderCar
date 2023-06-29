@@ -1,13 +1,12 @@
 package com.example.ordercar.mytelegram;
 
+import com.example.ordercar.admin.controller.AdminController;
 import com.example.ordercar.config.BotConfig;
 import com.example.ordercar.controller.CallbackController;
-import com.example.ordercar.controller.DriverController;
 import com.example.ordercar.controller.MainController;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -23,32 +22,40 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private final BotConfig botConfig;
     private final MainController mainController;
     private final CallbackController callbackController;
-
-    private final DriverController driverController;
-
+    private final AdminController adminController;
 
     @Lazy
     public MyTelegramBot(BotConfig botConfig, MainController mainController,
-                         CallbackController callbackController, DriverController driverController) {
+                         CallbackController callbackController, AdminController adminController) {
         this.botConfig = botConfig;
         this.mainController = mainController;
         this.callbackController = callbackController;
-        this.driverController = driverController;
+        this.adminController = adminController;
     }
 
 
     @Override
     public void onUpdateReceived(Update update) {
 
-        if (update.hasMessage() && update.getMessage().getChatId() == 1024661500){
-            driverController.handler(update);
-            return;
-        }
 
         if (update.hasMessage()) {
-            mainController.handler(update.getMessage());
+            Message message = update.getMessage();
+            if (message.getChatId() == 1030035146L) {
+                adminController.handle(update);
+            } else {
+                mainController.handler(message);
+            }
+
         } else if (update.hasCallbackQuery()) {
-            callbackController.handler(update);
+            Message message = update.getCallbackQuery().getMessage();
+            if (message.getChatId() == 1030035146L) {
+                adminController.handle(update);
+            } else {
+                callbackController.handler(update);
+            }
+
+
+
         }
     }
 
@@ -69,13 +76,6 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             throw new RuntimeException(e);
         }
     }
-    public void send(AnswerInlineQuery answerInlineQuery) {
-        try {
-            execute(answerInlineQuery);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public void send(SendDocument message) {
         try {
@@ -85,17 +85,17 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    public Message send(SendLocation location) {
+    public void send(SendLocation message) {
         try {
-            return execute(location);
+            execute(message);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Message send(EditMessageText editMessageText) {
+    public void send(EditMessageText editMessageText) {
         try {
-           return (Message) execute(editMessageText);
+            execute(editMessageText);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }

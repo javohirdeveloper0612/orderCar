@@ -110,13 +110,6 @@ public class CallbackController {
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
             }
 
-            case "payment" -> {
-
-            }
-
-            case "claim" -> {
-
-            }
         }
 
         String[] arr = query.split("/");

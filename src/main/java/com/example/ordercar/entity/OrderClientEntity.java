@@ -20,6 +20,7 @@ public class OrderClientEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private Long chatId;
 
     @Column
@@ -37,11 +38,14 @@ public class OrderClientEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private LocationClient toWhere;
 
+    @Column
+    private double onlineMoney;
 
+    @Column
     private LocalDate orderDate;
 
     @Enumerated(EnumType.STRING)
-    private Payment cashOrOnline;
+    private Payment payment;
 
     @Enumerated(EnumType.STRING)
     private Status status;
