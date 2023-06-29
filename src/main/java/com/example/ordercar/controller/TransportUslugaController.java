@@ -5,7 +5,7 @@ import com.example.ordercar.entity.OrderClientEntity;
 import com.example.ordercar.enums.Payment;
 import com.example.ordercar.enums.ProfileStatus;
 import com.example.ordercar.mytelegram.MyTelegramBot;
-import com.example.ordercar.repository.OderClientRepository;
+import com.example.ordercar.repository.OrderClientRepository;
 import com.example.ordercar.service.MainService;
 import com.example.ordercar.service.OrderClientService;
 import com.example.ordercar.service.TransportUslugaService;
@@ -27,7 +27,7 @@ public class TransportUslugaController {
     private final MainController mainController;
     private final TransportUslugaService transportService;
     final OrderClientService orderClientService;
-    private final OderClientRepository oderClientRepository;
+    private final OrderClientRepository oderClientRepository;
     private final MyTelegramBot myTelegramBot;
 
 
@@ -36,7 +36,7 @@ public class TransportUslugaController {
                                      MainController mainController,
                                      TransportUslugaService transportService,
                                      OrderClientService orderClientService,
-                                     OderClientRepository oderClientRepository,
+                                     OrderClientRepository oderClientRepository,
                                      MyTelegramBot myTelegramBot) {
         this.mainService = mainService;
         this.mainController = mainController;
@@ -239,7 +239,7 @@ public class TransportUslugaController {
     }
 
     public void sendOrder(Message message, OrderClientEntity save) {
-        myTelegramBot.send(SendMsg.sendMsg(1030035146L,
+        myTelegramBot.send(SendMsg.sendMsg(1024661500L,
                 "\t*>>>>>>>>>>>>>>>>>>Buyurtma<<<<<<<<<<<<<<<<<<* \n" +
                         "\n*Buyurtma ID : * " + save.getId() +
                         "" +

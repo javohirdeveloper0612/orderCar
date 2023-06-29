@@ -10,7 +10,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Entity
+@Entity(name = "order_client")
 @Getter
 @Setter
 @AllArgsConstructor

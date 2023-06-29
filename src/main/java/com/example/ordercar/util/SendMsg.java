@@ -66,6 +66,13 @@ public class SendMsg {
         return document;
     }
 
+    public static SendDocument sendDoc(Long id, InputFile inputFile) {
+
+        SendDocument sendDocument = new SendDocument();
+        sendDocument.setChatId(id);
+        sendDocument.setDocument(inputFile);
+        return sendDocument;
+    }
 
     public static SendMessage sendMsgParse(Long chatId, String text) {
         SendMessage sendMessage = new SendMessage();

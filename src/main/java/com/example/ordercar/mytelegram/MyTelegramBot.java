@@ -2,6 +2,7 @@ package com.example.ordercar.mytelegram;
 
 import com.example.ordercar.config.BotConfig;
 import com.example.ordercar.controller.CallbackController;
+import com.example.ordercar.controller.DriverController;
 import com.example.ordercar.controller.MainController;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -21,17 +22,25 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private final MainController mainController;
     private final CallbackController callbackController;
 
+    private final DriverController driverController;
+
     @Lazy
     public MyTelegramBot(BotConfig botConfig, MainController mainController,
-                         CallbackController callbackController) {
+                         CallbackController callbackController, DriverController driverController) {
         this.botConfig = botConfig;
         this.mainController = mainController;
         this.callbackController = callbackController;
+        this.driverController = driverController;
     }
 
 
     @Override
     public void onUpdateReceived(Update update) {
+
+        if (update.hasMessage() && update.getMessage().getChatId() == 1024661500){
+            driverController.handler(update);
+            return;
+        }
 
         if (update.hasMessage()) {
             mainController.handler(update.getMessage());
