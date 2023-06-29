@@ -43,37 +43,6 @@ public class DriverController {
             if (message.hasText()) {
                 String text = message.getText();
 
-                if (text.equals("loca")){
-
-                    double latitude = 41.37607;
-                    double longitude = 69.365975;
-
-// Location obyekti yaratish
-                    Location location = new Location();
-                    location.setLatitude(latitude);
-                    location.setLongitude(longitude);
-
-// Caption yaratish
-                    String caption = "Joylashuv: " + latitude + ", " + longitude;
-
-// Inline keyboard yaratish
-                    InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                    List<InlineKeyboardButton> row = new ArrayList<>();
-                    InlineKeyboardButton button = new InlineKeyboardButton();
-                    button.setText("Joylashuvni ko'rsatish");
-                    button.setCallbackData("show_location#" + latitude + "#" + longitude);
-                    row.add(button);
-                    inlineKeyboardMarkup.setKeyboard(Collections.singletonList(row));
-
-// Javob xabarini yaratish
-                    SendMessage sendMessage = new SendMessage();
-                    sendMessage.setReplyMarkup(inlineKeyboardMarkup);
-                    sendMessage.setText("Joylashuvni ko'rsatish uchun tugmani bosing");
-                    sendMessage.setChatId(message.getChatId());
-
-                    myTelegramBot.send(sendMessage);
-
-                }
                 switch (text) {
                     case "/start" -> {
                         driverService.menu(message);
