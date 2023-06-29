@@ -241,7 +241,7 @@ public class TransportUslugaController {
     }
 
     public void sendOrder(Message message, OrderClientEntity save) {
-        myTelegramBot.send(SendMsg.sendMsg(5530157790L,
+        myTelegramBot.send(SendMsg.sendMsg(1024661550L,
                 "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
         myTelegramBot.send(SendMsg.sendMsg(1024661500L,
                 "\t*>>>>>>>>>>>>>>>>>>Buyurtma<<<<<<<<<<<<<<<<<<* \n" +
