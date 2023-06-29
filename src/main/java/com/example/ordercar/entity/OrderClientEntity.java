@@ -1,7 +1,7 @@
 package com.example.ordercar.entity;
 
 import com.example.ordercar.enums.Payment;
-import com.example.ordercar.enums.ProfileStatus;
+import com.example.ordercar.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public class OrderClientEntity {
     private Payment cashOrOnline;
 
     @Enumerated(EnumType.STRING)
-    private ProfileStatus status;
+    private Status status;
 
 
 }

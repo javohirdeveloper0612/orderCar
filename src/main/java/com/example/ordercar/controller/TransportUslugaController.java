@@ -3,7 +3,7 @@ package com.example.ordercar.controller;
 import com.example.ordercar.entity.LocationClient;
 import com.example.ordercar.entity.OrderClientEntity;
 import com.example.ordercar.enums.Payment;
-import com.example.ordercar.enums.ProfileStatus;
+import com.example.ordercar.enums.Status;
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.repository.OrderClientRepository;
 import com.example.ordercar.service.MainService;
@@ -168,6 +168,19 @@ public class TransportUslugaController {
 
     }
 
+    private boolean checkMoney(Message message) {
+        String text = message.getText();
+        for (int i = 0; i < text.length(); i++) {
+            if (Character.isAlphabetic(text.charAt(i)) || text.length() < 4) {
+                myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
+                        "\uD83D\uDD22 *To'lov miqdorini kiriting minimal 1000: (UZS)*"));
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     boolean checkSmsCode(Message message) {
         return message.getText().equals(orderClient.getSmsCode());
     }
@@ -232,7 +245,7 @@ public class TransportUslugaController {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                 "*Buyurtmangiz qabul qilindi ! Tez orada mutaxasislarimisz siz bilan boglanadi*"));
         orderClient.setCashOrOnline(Payment.NAQD);
-        orderClient.setStatus(ProfileStatus.ACTIVE);
+        orderClient.setStatus(Status.ACTIVE);
         saveUser(message.getChatId()).setStep(null);
         OrderClientEntity save = oderClientRepository.save(orderClient);
         orderClient = new OrderClientEntity();
@@ -241,9 +254,7 @@ public class TransportUslugaController {
     }
 
     public void sendOrder(Message message, OrderClientEntity save) {
-        myTelegramBot.send(SendMsg.sendMsg(1024661550L,
-                "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
-        myTelegramBot.send(SendMsg.sendMsg(1024661500L,
+        myTelegramBot.send(SendMsg.sendMsg(1024661500l,
                 "\t*>>>>>>>>>>>>>>>>>>Buyurtma<<<<<<<<<<<<<<<<<<* \n" +
                         "\n*Buyurtma ID : * " + save.getId() +
                         "" +

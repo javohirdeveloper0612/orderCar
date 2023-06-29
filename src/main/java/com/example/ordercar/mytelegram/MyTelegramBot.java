@@ -7,11 +7,13 @@ import com.example.ordercar.controller.MainController;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -23,6 +25,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private final CallbackController callbackController;
 
     private final DriverController driverController;
+
 
     @Lazy
     public MyTelegramBot(BotConfig botConfig, MainController mainController,
@@ -66,6 +69,13 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             throw new RuntimeException(e);
         }
     }
+    public void send(AnswerInlineQuery answerInlineQuery) {
+        try {
+            execute(answerInlineQuery);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void send(SendDocument message) {
         try {
@@ -75,17 +85,17 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    public void send(SendLocation message) {
+    public Message send(SendLocation location) {
         try {
-            execute(message);
+            return execute(location);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void send(EditMessageText editMessageText) {
+    public Message send(EditMessageText editMessageText) {
         try {
-            execute(editMessageText);
+           return (Message) execute(editMessageText);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }

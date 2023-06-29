@@ -19,6 +19,14 @@ public class SendMsg {
         sendMessage.setParseMode("Markdown");
         return sendMessage;
     }
+    public static SendMessage sendMsg(Long id, String text,Integer messageId) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(id);
+        sendMessage.setReplyToMessageId(messageId);
+        sendMessage.setText(text);
+        sendMessage.setParseMode("Markdown");
+        return sendMessage;
+    }
 
     public static SendMessage sendMsg(Long id, String text, ReplyKeyboardMarkup markup) {
         SendMessage sendMessage = new SendMessage();
@@ -99,6 +107,14 @@ public class SendMsg {
         sendLocation.setLongitude(location.getLongitude());
         return sendLocation;
     }
+    public static SendLocation sendLocation(Long id ,LocationClient location,Integer messageId) {
+        SendLocation sendLocation = new SendLocation();
+        sendLocation.setChatId(id);
+        sendLocation.setLatitude(location.getLatitude());
+        sendLocation.setLongitude(location.getLongitude());
+        sendLocation.setReplyToMessageId(messageId);
+        return sendLocation;
+    }
 
     public static EditMessageText sendMsgParseEdite(Long chatId, String text, Integer messageId) {
         EditMessageText sendMessage = new EditMessageText();
@@ -115,6 +131,16 @@ public class SendMsg {
         deleteMessage.setMessageId(messageId);
         deleteMessage.setChatId(chatId);
         return deleteMessage;
+    }
+
+    public static EditMessageText editMessage(Long chatId, String text, InlineKeyboardMarkup markup,Integer messageId){
+        EditMessageText editMessageText = new EditMessageText();
+        editMessageText.setChatId(chatId);
+        editMessageText.setMessageId(messageId);
+        editMessageText.setText(text);
+        editMessageText.setReplyMarkup(markup);
+
+        return editMessageText;
     }
 
 }
