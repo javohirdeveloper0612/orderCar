@@ -7,9 +7,9 @@ import com.example.ordercar.entity.OrderClientEntity;
 import com.example.ordercar.entity.ProfileEntity;
 import com.example.ordercar.enums.Payment;
 import com.example.ordercar.enums.ProfileRole;
-import com.example.ordercar.enums.ProfileStatus;
+import com.example.ordercar.enums.Status;
 import com.example.ordercar.mytelegram.MyTelegramBot;
-import com.example.ordercar.repository.OderClientRepository;
+import com.example.ordercar.repository.OrderClientRepository;
 import com.example.ordercar.repository.ProfileRepository;
 import com.example.ordercar.service.TransportUslugaService;
 import com.example.ordercar.util.SendMsg;
@@ -33,16 +33,16 @@ public class TextController {
     private final List<TelegramUsers> list = new ArrayList<>();
     private final ProfileRepository profileRepository;
     private final TransportUslugaService uslugaService;
-    private final OderClientRepository oderClientRepository;
+    private final OrderClientRepository orderClientRepository;
 
     private final MyTelegramBot myTelegramBot;
 
     @Lazy
-    public TextController(AdminService adminService, ProfileRepository profileRepository, TransportUslugaService uslugaService, OderClientRepository oderClientRepository, MyTelegramBot myTelegramBot) {
+    public TextController(AdminService adminService, ProfileRepository profileRepository, TransportUslugaService uslugaService, OrderClientRepository orderClientRepository, MyTelegramBot myTelegramBot) {
         this.adminService = adminService;
         this.profileRepository = profileRepository;
         this.uslugaService = uslugaService;
-        this.oderClientRepository = oderClientRepository;
+        this.orderClientRepository = orderClientRepository;
         this.myTelegramBot = myTelegramBot;
     }
 
@@ -139,8 +139,8 @@ public class TextController {
             if (step.getStep().equals(Step.GETTOWHERELOCATION)) {
                 client.setToWhere(getCurrentLocation(message));
                 client.setPayment(Payment.NAQD);
-                client.setStatus(ProfileStatus.ACTIVE);
-                oderClientRepository.save(client);
+                client.setStatus(Status.ACTIVE);
+                orderClientRepository.save(client);
                 client = new OrderClientEntity();
                 adminService.claimMessage(message);
                 adminService.mainMenu(message);
@@ -180,7 +180,7 @@ public class TextController {
     }
 
     public void getOrderDate(LocalDate date, Message message) {
-        Boolean exists = oderClientRepository.existsByOrderDate(date);
+        Boolean exists = orderClientRepository.existsByOrderDate(date);
         if (exists) {
             myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
                     "*Kechirasiz, ushbu  sana band qilingan. Boshqa sanani tanlang!*"));

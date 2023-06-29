@@ -5,9 +5,9 @@ import com.example.ordercar.entity.OrderClientEntity;
 import com.example.ordercar.entity.ProfileEntity;
 import com.example.ordercar.enums.Payment;
 import com.example.ordercar.enums.ProfileRole;
-import com.example.ordercar.enums.ProfileStatus;
+import com.example.ordercar.enums.Status;
 import com.example.ordercar.mytelegram.MyTelegramBot;
-import com.example.ordercar.repository.OderClientRepository;
+import com.example.ordercar.repository.OrderClientRepository;
 import com.example.ordercar.repository.ProfileRepository;
 import com.example.ordercar.service.MainService;
 import com.example.ordercar.service.OrderClientService;
@@ -30,7 +30,7 @@ public class TransportUslugaController {
     private final MainController mainController;
     private final TransportUslugaService transportService;
     final OrderClientService orderClientService;
-    private final OderClientRepository oderClientRepository;
+    private final OrderClientRepository orderClientRepository;
     private final MyTelegramBot myTelegramBot;
     private final ProfileRepository profileRepository;
 
@@ -40,13 +40,13 @@ public class TransportUslugaController {
                                      MainController mainController,
                                      TransportUslugaService transportService,
                                      OrderClientService orderClientService,
-                                     OderClientRepository oderClientRepository,
+                                     OrderClientRepository orderClientRepository,
                                      MyTelegramBot myTelegramBot, ProfileRepository profileRepository) {
         this.mainService = mainService;
         this.mainController = mainController;
         this.transportService = transportService;
         this.orderClientService = orderClientService;
-        this.oderClientRepository = oderClientRepository;
+        this.orderClientRepository = orderClientRepository;
         this.myTelegramBot = myTelegramBot;
 
 
@@ -188,7 +188,7 @@ public class TransportUslugaController {
     }
 
     public void getOrderDate(LocalDate localDate, Message message) {
-        Boolean exists = oderClientRepository.existsByOrderDate(localDate);
+        Boolean exists = orderClientRepository.existsByOrderDate(localDate);
         if (exists) {
             myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
                     "*Kechirasiz, ushbu  sana band qilingan. Boshqa sanani tanlang!*"));
@@ -247,9 +247,9 @@ public class TransportUslugaController {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                 "*Buyurtmangiz qabul qilindi ! Tez orada mutaxasislarimisz siz bilan boglanadi*"));
         orderClient.setPayment(Payment.NAQD);
-        orderClient.setStatus(ProfileStatus.ACTIVE);
+        orderClient.setStatus(Status.ACTIVE);
         saveUser(message.getChatId()).setStep(null);
-        OrderClientEntity save = oderClientRepository.save(orderClient);
+        OrderClientEntity save = orderClientRepository.save(orderClient);
         orderClient = new OrderClientEntity();
         sendOrder(save);
     }

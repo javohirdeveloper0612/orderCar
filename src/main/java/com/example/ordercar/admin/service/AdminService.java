@@ -5,9 +5,9 @@ import com.example.ordercar.entity.OrderClientEntity;
 import com.example.ordercar.entity.ProfileEntity;
 import com.example.ordercar.enums.Payment;
 import com.example.ordercar.enums.ProfileRole;
-import com.example.ordercar.enums.ProfileStatus;
+import com.example.ordercar.enums.Status;
 import com.example.ordercar.mytelegram.MyTelegramBot;
-import com.example.ordercar.repository.OderClientRepository;
+import com.example.ordercar.repository.OrderClientRepository;
 import com.example.ordercar.repository.ProfileRepository;
 import com.example.ordercar.util.Button;
 import com.example.ordercar.util.InlineButton;
@@ -28,14 +28,14 @@ import java.util.TreeMap;
 @Service
 public class AdminService {
     private final MyTelegramBot myTelegramBot;
-    private final OderClientRepository oderClientRepository;
+    private final OrderClientRepository orderClientRepository;
     private final ProfileRepository profileRepository;
 
     public AdminService(MyTelegramBot myTelegramBot,
-                        OderClientRepository oderClientRepository,
+                        OrderClientRepository orderClientRepository,
                         ProfileRepository profileRepository) {
         this.myTelegramBot = myTelegramBot;
-        this.oderClientRepository = oderClientRepository;
+        this.orderClientRepository = orderClientRepository;
         this.profileRepository = profileRepository;
     }
 
@@ -58,7 +58,7 @@ public class AdminService {
     }
 
     public void activeOrder(Message message) {
-        var list = oderClientRepository.findAllByStatus(ProfileStatus.ACTIVE);
+        var list = orderClientRepository.findAllByStatus(Status.ACTIVE);
         if (list.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                     "*Active buyurtmalar mavjud emas*"));
@@ -84,7 +84,7 @@ public class AdminService {
     }
 
     public void notActiveOrder(Message message) {
-        var list = oderClientRepository.findAllByStatus(ProfileStatus.BLOCK);
+        var list = orderClientRepository.findAllByStatus(Status.BLOCK);
         if (list.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                     "*Tugallangan buyurtmalar mavjud emas*"));
@@ -141,7 +141,7 @@ public class AdminService {
             InputFile inputFile = new InputFile();
             inputFile.setMedia(inputStream, "tugallanga zakaslar ro`yxati.xlsx");
 
-            myTelegramBot.send(SendMsg.sendDocument(message.getChatId(), inputFile));
+            myTelegramBot.send(SendMsg.sendDoc(message.getChatId(), inputFile));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -149,7 +149,7 @@ public class AdminService {
 
 
     public void onlineProfit(Message message) {
-        var payment = oderClientRepository.findAllByPayment(Payment.PLASTIK);
+        var payment = orderClientRepository.findAllByPayment(Payment.PLASTIK);
         if (payment.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                     "*Online kirimlar ro'yxati mavjud emas*"));
@@ -206,7 +206,7 @@ public class AdminService {
             InputFile inputFile = new InputFile();
             inputFile.setMedia(inputStream, "online kirimlar ro`yxati.xlsx");
 
-            myTelegramBot.send(SendMsg.sendDocument(message.getChatId(), inputFile));
+            myTelegramBot.send(SendMsg.sendDoc(message.getChatId(), inputFile));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -340,7 +340,7 @@ public class AdminService {
             InputFile inputFile = new InputFile();
             inputFile.setMedia(inputStream, "haydovchilar ro`yxati.xlsx");
 
-            myTelegramBot.send(SendMsg.sendDocument(message.getChatId(), inputFile));
+            myTelegramBot.send(SendMsg.sendDoc(message.getChatId(), inputFile));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

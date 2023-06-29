@@ -1,5 +1,5 @@
 package com.example.ordercar.enums;
 
-public enum ProfileStatus {
+public enum Status {
     ACTIVE, BLOCK, NOTACTIVE
 }

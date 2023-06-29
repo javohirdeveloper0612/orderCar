@@ -1,7 +1,7 @@
 package com.example.ordercar.entity;
 
 import com.example.ordercar.enums.ProfileRole;
-import com.example.ordercar.enums.ProfileStatus;
+import com.example.ordercar.enums.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +20,7 @@ public class ProfileEntity {
     @Enumerated(EnumType.STRING)
     private ProfileRole role;
     @Enumerated(EnumType.STRING)
-    private ProfileStatus status;
+    private Status status;
 
 
 }

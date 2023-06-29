@@ -71,7 +71,7 @@ public class DriverService {
                 XSSFRow row;
 
                 patientData.put(orderClient.getId(), new Object[]{orderClient.getId().toString(), orderClient.getFullName(),
-                        orderClient.getPhone(), orderClient.getOrderDate().toString(), orderClient.getCashOrOnline().toString(), orderClient.getStatus().toString()});
+                        orderClient.getPhone(), orderClient.getOrderDate().toString(), orderClient.getPayment().toString(), orderClient.getStatus().toString()});
                 Set<Long> keyid = patientData.keySet();
 
                 int rowid = 0;
@@ -137,7 +137,7 @@ public class DriverService {
                             "\n*TELEFON RAQAM : * " + entity.getPhone() + "" +
                             "\n*Buyurtma sanasi : * " + entity.getOrderDate() + "" +
                             "\n*Status :* " + entity.getStatus() + "" +
-                            "\n*To'lov turi : * " + entity.getCashOrOnline(),
+                            "\n*To'lov turi : * " + entity.getPayment(),
                     InlineButton.keyboardMarkup(InlineButton.rowList(
                             InlineButton.row(InlineButton.button("zakasni tugatish ✅", "finish_order#" + entity.getId())),
                             InlineButton.row(InlineButton.button("Mashina chiqadigan manzil \uD83D\uDCCD", "loc1#" + entity.getId())),
@@ -171,7 +171,7 @@ public class DriverService {
                         "\n*TELEFON RAQAM : * " + entity.getPhone() + "" +
                         "\n*Buyurtma sanasi : * " + entity.getOrderDate() + "" +
                         "\n*Status :* " + entity.getStatus() + "" +
-                        "\n*To'lov turi : * " + entity.getCashOrOnline(),
+                        "\n*To'lov turi : * " + entity.getPayment(),
                 InlineButton.keyboardMarkup(InlineButton.rowList(
                         InlineButton.row(InlineButton.button("zakasni tugatish ✅", "finish_order#"+entity.getId())),
                         InlineButton.row(InlineButton.button("Mashina chiqadigan manzil \uD83D\uDCCD", "loc1#"+entity.getId()+"#"+locationMessageId)),
