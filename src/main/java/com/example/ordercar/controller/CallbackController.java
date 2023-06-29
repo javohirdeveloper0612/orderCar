@@ -51,7 +51,7 @@ public class CallbackController {
 
         String[] parts = query.split("#");
         long locationId = 0;
-        if (parts.length >= 2) {
+        if (parts.length == 2) {
            locationId = Long.parseLong(parts[1]);
         }
 
@@ -66,11 +66,11 @@ public class CallbackController {
             }
 
             case "loc1" -> {
-                driverService.getFromWhere(message, locationId,message.getMessageId());
+                driverService.getLocation(message, parts,message.getMessageId());
             }
 
             case "loc2" -> {
-                driverService.getToWhere(message, locationId,message.getMessageId());
+                driverService.getLocation(message, parts,message.getMessageId());
             }
             case "back" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
