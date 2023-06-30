@@ -76,7 +76,7 @@ public class AdminService {
                             "\n*Status :* " + entity.getStatus() + "" +
                             "\n*To'lov turi : * " + entity.getPayment(),
                     InlineButton.keyboardMarkup(InlineButton.rowList(
-                            InlineButton.row(InlineButton.button("zakasni tugatish ✅", "zakas")),
+                            InlineButton.row(InlineButton.button("zakasni tugatish ✅", "accept_order")),
                             InlineButton.row(InlineButton.button("Mashina chiqadigan manzil \uD83D\uDCCD", "loc1")),
                             InlineButton.row(InlineButton.button("Mashina boradigan manzil \uD83D\uDCCD", "loc2"))))));
 
@@ -282,7 +282,7 @@ public class AdminService {
 
     public void listOfDriver(Message message) {
 
-        var list = profileRepository.findAllByRole(ProfileRole.VODITEL);
+        var list = profileRepository.findAllByRole(ProfileRole.DRIVER);
         if (list.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                     "*Haydovchilar royxati mavjud emas*"));

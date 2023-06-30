@@ -16,8 +16,12 @@ public class Button {
         return keyboardButton;
     }
 
-
-
+    public static KeyboardButton button() {
+        KeyboardButton keyboardButton = new KeyboardButton();
+        keyboardButton.setRequestContact(true);
+        keyboardButton.setText("Share Contact");
+        return keyboardButton;
+    }
 
     public static KeyboardRow row(KeyboardButton... keyboardButtons) {
         KeyboardRow keyboardRow = new KeyboardRow();

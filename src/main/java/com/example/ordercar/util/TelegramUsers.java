@@ -7,5 +7,5 @@ public class TelegramUsers {
 
     private Long chatId;
 
-    private Step step;
+    private Step step =Step.NONE;
 }

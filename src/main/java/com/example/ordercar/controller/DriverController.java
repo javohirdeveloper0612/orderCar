@@ -3,6 +3,7 @@ package com.example.ordercar.controller;
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.service.DriverService;
 import com.example.ordercar.util.ButtonName;
+import com.example.ordercar.util.SendMsg;
 import com.example.ordercar.util.TelegramUsers;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
@@ -43,10 +44,12 @@ public class DriverController {
             if (message.hasText()) {
                 String text = message.getText();
 
+                if (text.equals("Asosiy Menyu !") || text.equals("/start")){
+                    driverService.menu(message);
+                    return;
+                }
+
                 switch (text) {
-                    case "/start" -> {
-                        driverService.menu(message);
-                    }
 
                     case ButtonName.activeOrder -> {
                         driverService.activeOrder(message);
@@ -55,8 +58,15 @@ public class DriverController {
                     case ButtonName.notActiveOrder -> {
                         driverService.orderList(message);
                     }
+
+                    case ButtonName.acceptOrder -> {
+                        driverService.acceptOrderList(message);
+                    }
                 }
+                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),"Siz noto'g'ri buyruq kiritdingiz"));
+                return;
             }
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),"Siz noto'g'ri buyruq kiritdingiz"));
         }
     }
 

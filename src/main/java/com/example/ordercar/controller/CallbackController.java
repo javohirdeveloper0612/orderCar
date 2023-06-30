@@ -72,6 +72,10 @@ public class CallbackController {
             case "loc2" -> {
                 driverService.getLocation(message, parts,message.getMessageId());
             }
+
+            case "accept_order" -> {
+                driverService.acceptOrder(message, locationId);
+            }
             case "back" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 mainService.mainMenu(message);

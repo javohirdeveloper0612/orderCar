@@ -14,15 +14,11 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 @Service
 public class DriverService {
@@ -44,7 +40,8 @@ public class DriverService {
                 Button.markup(
                         Button.rowList(
                                 Button.row(Button.button(ButtonName.activeOrder),
-                                        Button.button(ButtonName.notActiveOrder))
+                                        Button.button(ButtonName.notActiveOrder)),
+                                Button.row(Button.button(ButtonName.acceptOrder))
                         ))));
     }
 
@@ -121,7 +118,7 @@ public class DriverService {
 
     public void activeOrder(Message message) {
 
-        var orderClientList = repository.findAllByStatus(Status.ACTIVE);
+        var orderClientList = repository.findActiveOrders(message.getChatId());
 
         if (orderClientList.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Hozirda Active buyurtmalar mavjud emas*"));
@@ -148,42 +145,99 @@ public class DriverService {
     }
 
     public void getLocation(Message message, String[] parts, Integer messageId) {
-        Integer locationMessageId=0;
-        OrderClientEntity entity = repository.findById(Long.valueOf(parts[1])).get();
-        if (parts[0].equals("loc1")){
-            System.out.println("11");
-            locationMessageId = myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), entity.getFromWhere(), messageId)).getMessageId();
-        } else if (parts[0].equals("loc2")) {
-            System.out.println("22");
-             locationMessageId = myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), entity.getToWhere(), messageId)).getMessageId();
-        }
-        System.out.println(Arrays.toString(parts));
-        if (parts.length == 3){
-            myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), Integer.valueOf(parts[2])));
+        Integer locationMessageId = 0;
+        Optional<OrderClientEntity> optional = repository.findById(Long.valueOf(parts[1]));
 
-        }
+        if (optional.isPresent()) {
 
-        myTelegramBot.send(SendMsg.editMessage(message.getChatId(),
-                "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
-                        "\n*Buyurtma ID : * " + entity.getId() +
-                        "" +
-                        "\n*ISM VA FAMILIYA : * " + entity.getFullName() + "" +
-                        "\n*TELEFON RAQAM : * " + entity.getPhone() + "" +
-                        "\n*Buyurtma sanasi : * " + entity.getOrderDate() + "" +
-                        "\n*Status :* " + entity.getStatus() + "" +
-                        "\n*To'lov turi : * " + entity.getPayment(),
-                InlineButton.keyboardMarkup(InlineButton.rowList(
-                        InlineButton.row(InlineButton.button("zakasni tugatish ✅", "finish_order#"+entity.getId())),
-                        InlineButton.row(InlineButton.button("Mashina chiqadigan manzil \uD83D\uDCCD", "loc1#"+entity.getId()+"#"+locationMessageId)),
-                        InlineButton.row(InlineButton.button("Mashina boradigan manzil \uD83D\uDCCD", "loc2#"+entity.getId()+"#"+locationMessageId)))),messageId));
+            OrderClientEntity entity = optional.get();
+            if (parts[0].equals("loc1")) {
+                System.out.println("11");
+                locationMessageId = myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), entity.getFromWhere(), messageId)).getMessageId();
+            } else if (parts[0].equals("loc2")) {
+                System.out.println("22");
+                locationMessageId = myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), entity.getToWhere(), messageId)).getMessageId();
+            }
+            System.out.println(Arrays.toString(parts));
+            if (parts.length == 3) {
+                myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), Integer.valueOf(parts[2])));
+            }
+
+
+            myTelegramBot.send(SendMsg.editMessage(message.getChatId(),
+                    "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
+                            "\n*Buyurtma ID : * " + entity.getId() +
+                            "" +
+                            "\n*ISM VA FAMILIYA : * " + entity.getFullName() + "" +
+                            "\n*TELEFON RAQAM : * " + entity.getPhone() + "" +
+                            "\n*Buyurtma sanasi : * " + entity.getOrderDate() + "" +
+                            "\n*Status :* " + entity.getStatus() + "" +
+                            "\n*To'lov turi : * " + entity.getPayment(),
+                    InlineButton.keyboardMarkup(InlineButton.rowList(
+                            InlineButton.row(InlineButton.button("zakasni tugatish ✅", "finish_order#" + entity.getId())),
+                            InlineButton.row(InlineButton.button("Mashina chiqadigan manzil \uD83D\uDCCD", "loc1#" + entity.getId() + "#" + locationMessageId)),
+                            InlineButton.row(InlineButton.button("Mashina boradigan manzil \uD83D\uDCCD", "loc2#" + entity.getId() + "#" + locationMessageId)))), messageId));
+        }
     }
 
+
+    public void acceptOrderList(Message message) {
+
+        List<OrderClientEntity> orderClientList = repository.findOrderByStatus();
+
+        if (orderClientList.isEmpty()) {
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Hozirda Qabul qilinmagan buyurtmalar mavjud emas*"));
+            return;
+        }
+
+        for (OrderClientEntity entity : orderClientList) {
+
+
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
+                    "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
+                            "\n*Buyurtma ID : * " + entity.getId() +
+                            "" +
+                            "\n*ISM VA FAMILIYA : * " + entity.getFullName() + "" +
+                            "\n*TELEFON RAQAM : * " + entity.getPhone() + "" +
+                            "\n*Buyurtma sanasi : * " + entity.getOrderDate() + "" +
+                            "\n*Status :* " + entity.getStatus() + "" +
+                            "\n*To'lov turi : * " + entity.getPayment(),
+                    InlineButton.keyboardMarkup(InlineButton.rowList(
+                            InlineButton.row(InlineButton.button("Buyurtmani qabul qilish ✅", "accept_order#" + entity.getId()))))));
+        }
+    }
 
 
     public void finishOrder(Message message, long id, Integer messageId) {
-        OrderClientEntity orderClient = repository.findById(id).get();
-        orderClient.setStatus(Status.BLOCK);
-        repository.save(orderClient);
-        myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Buyurtma Muvaffaqiyatli to'gatildi ✅", messageId));
+        Optional<OrderClientEntity> optional = repository.findById(id);
+        if (optional.isPresent()) {
+            OrderClientEntity entity = optional.get();
+            entity.setStatus(Status.BLOCK);
+            repository.save(entity);
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Buyurtma Muvaffaqiyatli to'gatildi ✅", messageId));
+        }
     }
+
+    public void acceptOrder(Message message, long locationId) {
+        Optional<OrderClientEntity> optional = repository.findById(locationId);
+        if (optional.isPresent()) {
+            OrderClientEntity orderClient = optional.get();
+
+            if (orderClient.getDriverId() != null) {
+                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Ushbu Buyurtma boshqa haydovchi tamonidan qabul qilindi !"));
+                return;
+            }
+
+            orderClient.setStatus(Status.ACTIVE);
+            orderClient.setDriverId(message.getChatId());
+            repository.save(orderClient);
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Buyurtma Muvaffaqiyatli Qabul qilindi ✅"));
+
+        }
+    }
+
+
 }
+
+
+
