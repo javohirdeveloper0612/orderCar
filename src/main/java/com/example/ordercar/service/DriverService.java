@@ -14,7 +14,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -120,7 +119,6 @@ public class DriverService {
     }
 
     public void activeOrder(Message message) {
-
         var orderClientList = repository.findAllByStatus(Status.ACTIVE);
 
         if (orderClientList.isEmpty()) {
@@ -128,7 +126,6 @@ public class DriverService {
         }
 
         for (OrderClientEntity entity : orderClientList) {
-
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                     "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
                             "\n*Buyurtma ID : * " + entity.getId() +
@@ -148,17 +145,17 @@ public class DriverService {
     }
 
     public void getLocation(Message message, String[] parts, Integer messageId) {
-        Integer locationMessageId=0;
+        Integer locationMessageId = 0;
         OrderClientEntity entity = repository.findById(Long.valueOf(parts[1])).get();
-        if (parts[0].equals("loc1")){
+        if (parts[0].equals("loc1")) {
             System.out.println("11");
             locationMessageId = myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), entity.getFromWhere(), messageId)).getMessageId();
         } else if (parts[0].equals("loc2")) {
             System.out.println("22");
-             locationMessageId = myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), entity.getToWhere(), messageId)).getMessageId();
+            locationMessageId = myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), entity.getToWhere(), messageId)).getMessageId();
         }
         System.out.println(Arrays.toString(parts));
-        if (parts.length == 3){
+        if (parts.length == 3) {
             myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), Integer.valueOf(parts[2])));
 
         }
@@ -173,11 +170,10 @@ public class DriverService {
                         "\n*Status :* " + entity.getStatus() + "" +
                         "\n*To'lov turi : * " + entity.getPayment(),
                 InlineButton.keyboardMarkup(InlineButton.rowList(
-                        InlineButton.row(InlineButton.button("zakasni tugatish ✅", "finish_order#"+entity.getId())),
-                        InlineButton.row(InlineButton.button("Mashina chiqadigan manzil \uD83D\uDCCD", "loc1#"+entity.getId()+"#"+locationMessageId)),
-                        InlineButton.row(InlineButton.button("Mashina boradigan manzil \uD83D\uDCCD", "loc2#"+entity.getId()+"#"+locationMessageId)))),messageId));
+                        InlineButton.row(InlineButton.button("zakasni tugatish ✅", "finish_order#" + entity.getId())),
+                        InlineButton.row(InlineButton.button("Mashina chiqadigan manzil \uD83D\uDCCD", "loc1#" + entity.getId() + "#" + locationMessageId)),
+                        InlineButton.row(InlineButton.button("Mashina boradigan manzil \uD83D\uDCCD", "loc2#" + entity.getId() + "#" + locationMessageId)))), messageId));
     }
-
 
 
     public void finishOrder(Message message, long id, Integer messageId) {
