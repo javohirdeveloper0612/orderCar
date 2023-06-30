@@ -17,10 +17,13 @@ public class ProfileEntity {
     private String fullName;
     private String phone;
     private Long chatId;
+
+    private String smsCode;
     @Enumerated(EnumType.STRING)
     private ProfileRole role;
     @Enumerated(EnumType.STRING)
     private Status status;
+
 
 
 }

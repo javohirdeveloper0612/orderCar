@@ -113,7 +113,7 @@ public class TextController {
             } else if (step.getStep().equals(Step.GETPHONE)) {
                 if (adminService.checkPhone(message)) {
                     profile.setPhone(message.getText());
-                    profile.setRole(ProfileRole.VODITEL);
+                    profile.setRole(ProfileRole.DRIVER);
                     adminService.claimMessage(message);
                     profileRepository.save(profile);
                     profile = new ProfileEntity();

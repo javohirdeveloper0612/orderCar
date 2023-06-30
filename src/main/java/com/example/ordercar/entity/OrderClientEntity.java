@@ -50,5 +50,7 @@ public class OrderClientEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column
+    private Long driverId;
 
 }

@@ -1,5 +1,6 @@
 package com.example.ordercar.controller;
 
+
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.service.CallBackService;
 import com.example.ordercar.service.DriverService;
@@ -8,27 +9,31 @@ import com.example.ordercar.util.SendMsg;
 import com.example.ordercar.util.Step;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputLocationMessageContent;
 
 import java.time.LocalDate;
 
 @Controller
 public class CallbackController {
+
     private final MyTelegramBot myTelegramBot;
     private final CallBackService callBackService;
     private final TransportUslugaController uslugaController;
     private final MainService mainService;
     private final MainController mainController;
+
     private final DriverService driverService;
 
 
     @Lazy
     public CallbackController(MyTelegramBot myTelegramBot,
                               CallBackService callBackService,
-                              TransportUslugaController uslugaController,
-                              MainService mainService, MainController mainController,
-                              DriverService driverService) {
+                              TransportUslugaController uslugaController, MainService mainService, MainController mainController, DriverService driverService) {
         this.myTelegramBot = myTelegramBot;
 
         this.callBackService = callBackService;
@@ -47,15 +52,30 @@ public class CallbackController {
         String[] parts = query.split("#");
         long locationId = 0;
         if (parts.length == 2) {
-            locationId = Long.parseLong(parts[1]);
+           locationId = Long.parseLong(parts[1]);
         }
 
         switch (parts[0]) {
-            case "view_loc" -> myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), message.getMessageId()));
-            case "finish_order" -> driverService.finishOrder(message, locationId, message.getMessageId());
-            case "loc1" -> driverService.getLocation(message, parts, message.getMessageId());
-            case "loc2" -> driverService.getLocation(message, parts, message.getMessageId());
+            case "view_loc" -> {
+                myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), message.getMessageId()));
+                return;
+            }
 
+            case "finish_order" ->{
+                driverService.finishOrder(message,locationId,message.getMessageId());
+            }
+
+            case "loc1" -> {
+                driverService.getLocation(message, parts,message.getMessageId());
+            }
+
+            case "loc2" -> {
+                driverService.getLocation(message, parts,message.getMessageId());
+            }
+
+            case "accept_order" -> {
+                driverService.acceptOrder(message, locationId);
+            }
             case "back" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 mainService.mainMenu(message);
@@ -64,19 +84,21 @@ public class CallbackController {
             case "payme" -> {
                 callBackService.getPayMe(message);
                 uslugaController.saveUser(message.getChatId()).setStep(Step.PAYMENT);
-            }
 
+            }
             case "click" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 callBackService.getClick(message);
                 mainService.mainMenu(message);
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
+
             }
             case "humo" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 callBackService.getHumo(message);
                 mainService.mainMenu(message);
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
+
             }
             case "uzum" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));

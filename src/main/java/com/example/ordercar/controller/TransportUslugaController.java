@@ -255,7 +255,7 @@ public class TransportUslugaController {
     }
 
     public void sendOrder(OrderClientEntity save) {
-        var list = profileRepository.findAllByRole(ProfileRole.VODITEL);
+        var list = profileRepository.findAllByRole(ProfileRole.DRIVER);
         if (list.isEmpty()) {
             return;
         }
@@ -265,20 +265,18 @@ public class TransportUslugaController {
         }
     }
 
-    public void sendDataToDriver(ProfileEntity entity, OrderClientEntity save) {
+    public void sendDataToDriver(ProfileEntity entity, OrderClientEntity orderClient) {
         myTelegramBot.send(SendMsg.sendMsg(entity.getChatId(),
-                "*>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
-                        "\n*Buyurtma ID : * " + save.getId() +
+                "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
+                        "\n*Buyurtma ID : * " + orderClient.getId() +
                         "" +
-                        "\n*ISM VA FAMILIYA : * " + save.getFullName() + "" +
-                        "\n*TELEFON RAQAMI : * " + save.getPhone() + "" +
-                        "\n*BUYURTMA SANASI : * " + save.getOrderDate() + "" +
-                        "\n*STATUS :* " + save.getStatus() + "" +
-                        "\n*TO'LOV TURI: * " + save.getPayment(),
+                        "\n*ISM VA FAMILIYA : * " + orderClient.getFullName() + "" +
+                        "\n*TELEFON RAQAM : * " + orderClient.getPhone() + "" +
+                        "\n*Buyurtma sanasi : * " + orderClient.getOrderDate() + "" +
+                        "\n*Status :* " + orderClient.getStatus() + "" +
+                        "\n*To'lov turi : * " + orderClient.getPayment(),
                 InlineButton.keyboardMarkup(InlineButton.rowList(
-                        InlineButton.row(InlineButton.button("zakasni tugatish ✅", "zakas")),
-                        InlineButton.row(InlineButton.button("Mashina chiqadigan manzil \uD83D\uDCCD", "loc1")),
-                        InlineButton.row(InlineButton.button("Mashina boradigan manzil \uD83D\uDCCD", "loc2"))))));
+                        InlineButton.row(InlineButton.button("Buyurtmani qabul qilish ✅", "accept_order#" + orderClient.getId()))))));
     }
 
 

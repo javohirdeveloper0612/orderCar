@@ -19,4 +19,6 @@ public interface ButtonName {
     String activeOrder = "Tugatilmagan Buyurtmalar ⌚";
     String notActiveOrder = "Tugatilgan Buyurtmalar ✅";
 
+    String acceptOrder =  "Qabul qilinmagan buyurtmalar ⌚";
+
 }
