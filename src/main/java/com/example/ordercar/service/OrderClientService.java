@@ -23,8 +23,8 @@ public class OrderClientService {
 
     public void getFullName(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Iltimos to'liq ism va familiyangizni kiriting \n" +
-                        "Masalan : Qorjobov Shahzod*"));
+                "*Пожалуйста, введите ваше полное имя \n" +
+                        "Например: Коржабов Шахзод*"));
     }
 
     public ReplyKeyboardMarkup getLocation() {
@@ -43,7 +43,7 @@ public class OrderClientService {
 
     public void getPayment(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*⬇️ Quyidagi havola orqali o'tib to'lovni amalga oshiring va ✅ Tekshirish tugmasini bosing:*",
+                "*⬇️ Произведите оплату, перейдя по ссылке ниже и нажмите кнопку ✅ Проверить:*",
                 InlineButton.keyboardMarkup(InlineButton.rowList(
                         InlineButton.row(InlineButton.button("▶️ To'lov qilish", "payment")),
                         InlineButton.row(InlineButton.button("✅ Tekshirish", "claim")),

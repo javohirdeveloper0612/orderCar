@@ -1,10 +1,9 @@
 package com.example.ordercar.mytelegram;
-
 import com.example.ordercar.admin.controller.AdminController;
 import com.example.ordercar.config.BotConfig;
 import com.example.ordercar.controller.AuthController;
 import com.example.ordercar.controller.CallbackController;
-import com.example.ordercar.controller.DriverController;
+import com.example.ordercar.driver.controller.DriverController;
 import com.example.ordercar.controller.MainController;
 import com.example.ordercar.enums.Status;
 import com.example.ordercar.repository.ProfileRepository;
@@ -24,7 +23,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,16 +33,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private final MainController mainController;
     private final CallbackController callbackController;
     private final AdminController adminController;
-
     private final ProfileService profileService;
-
     private final AuthController authController;
-
     private final DriverController driverController;
-
     private final ProfileRepository profileRepository;
-
     private List<TelegramUsers> usersList = new ArrayList<>();
+
 
     @Lazy
     public MyTelegramBot(BotConfig botConfig, MainController mainController,
@@ -72,7 +66,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 profileRepository.changeVisibleByUserid(id, Status.BLOCK);
             } else if (status.equals("member")) {
                 profileRepository.changeVisibleByUserid(id, Status.ACTIVE);
-                send(SendMsg.sendMsg(id, "Botni qayta ishga tushirganingizdan xursandmiz"));
+                send(SendMsg.sendMsg(id, "Рад, что бот снова заработал !"));
             }
             return;
         }
@@ -86,16 +80,18 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 driverController.handler(update);
                 return;
             }
-            if (message.getChatId() == 1030035146L) {
-                adminController.handle(update);
-                return;
-            }
+
+//            if(message.getChatId() == 5530157790L){
+//                adminController.handle(update);
+//                return;
+//            }
 
             if (message.hasText() && message.getText().equals("*7777#")) {
                 authController.handle(message);
                 users.setStep(Step.REGISTER);
                 return;
             }
+
             if (users.getStep().equals(Step.REGISTER)) {
                 authController.handle(message);
                 return;
@@ -107,12 +103,15 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             mainController.handler(message);
 
         } else if (update.hasCallbackQuery()) {
+
             Message message = update.getCallbackQuery().getMessage();
+
             if (message.getChatId() == 1030035146L) {
                 adminController.handle(update);
             } else {
                 callbackController.handler(update);
             }
+
         }
     }
 

@@ -1,5 +1,4 @@
 package com.example.ordercar.admin.service;
-
 import com.example.ordercar.admin.button.ButtonName;
 import com.example.ordercar.entity.OrderClientEntity;
 import com.example.ordercar.entity.ProfileEntity;
@@ -19,7 +18,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
-
 import java.io.*;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +40,7 @@ public class AdminService {
     public void mainMenu(Message message) {
 
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*ADMIN MENUGA XUSH KELIBSIZ*",
+                "*ДОБРО ПОЖАЛОВАТЬ В МЕНЮ АДМИНИСТРАТОРА*",
                 Button.markup(Button.rowList(
 
                         Button.row(Button.button(ButtonName.onlineOrder)),
@@ -61,7 +59,7 @@ public class AdminService {
         var list = orderClientRepository.findAllByStatus(Status.ACTIVE);
         if (list.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                    "*Active buyurtmalar mavjud emas*"));
+                    "*Нет активных заказов*"));
             return;
         }
 
@@ -76,9 +74,9 @@ public class AdminService {
                             "\n*Status :* " + entity.getStatus() + "" +
                             "\n*To'lov turi : * " + entity.getPayment(),
                     InlineButton.keyboardMarkup(InlineButton.rowList(
-                            InlineButton.row(InlineButton.button("zakasni tugatish ✅", "accept_order")),
-                            InlineButton.row(InlineButton.button("Mashina chiqadigan manzil \uD83D\uDCCD", "loc1")),
-                            InlineButton.row(InlineButton.button("Mashina boradigan manzil \uD83D\uDCCD", "loc2"))))));
+                            InlineButton.row(InlineButton.button("окончание закята ✅", "accept_order")),
+                            InlineButton.row(InlineButton.button("Адрес, откуда уходит машина \uD83D\uDCCD", "loc1")),
+                            InlineButton.row(InlineButton.button("Пункт назначения автомобиля \uD83D\uDCCD", "loc2"))))));
 
         }
     }
@@ -87,7 +85,7 @@ public class AdminService {
         var list = orderClientRepository.findAllByStatus(Status.BLOCK);
         if (list.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                    "*Tugallangan buyurtmalar mavjud emas*"));
+                    "*Выполненные заказы недоступны*"));
             return;
         }
 
@@ -101,7 +99,7 @@ public class AdminService {
             if (entity != null) {
                 XSSFWorkbook workbook = new XSSFWorkbook();
                 XSSFSheet spreadsheet;
-                spreadsheet = workbook.createSheet("Tugallangan zakaslar");
+                spreadsheet = workbook.createSheet("Завершенные закяты");
 
                 XSSFRow row;
 
@@ -124,7 +122,7 @@ public class AdminService {
 
                 try {
 
-                    FileOutputStream out = new FileOutputStream("tugallanga zakaslar ro`yxati.xlsx");
+                    FileOutputStream out = new FileOutputStream("список завершенных закят.xlsx");
                     workbook.write(out);
                     out.close();
 
@@ -137,9 +135,9 @@ public class AdminService {
         }
 
         try {
-            InputStream inputStream = new FileInputStream("tugallanga zakaslar ro`yxati.xlsx");
+            InputStream inputStream = new FileInputStream("список завершенных закят.xlsx");
             InputFile inputFile = new InputFile();
-            inputFile.setMedia(inputStream, "tugallanga zakaslar ro`yxati.xlsx");
+            inputFile.setMedia(inputStream, "список завершенных закят.xlsx");
 
             myTelegramBot.send(SendMsg.sendDoc(message.getChatId(), inputFile));
         } catch (FileNotFoundException e) {
@@ -152,7 +150,7 @@ public class AdminService {
         var payment = orderClientRepository.findAllByPayment(Payment.PLASTIK);
         if (payment.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                    "*Online kirimlar ro'yxati mavjud emas*"));
+                    "*Нет онлайн-списка ввода*"));
             return;
         }
 
@@ -166,7 +164,7 @@ public class AdminService {
             if (entity != null) {
                 XSSFWorkbook workbook = new XSSFWorkbook();
                 XSSFSheet spreadsheet;
-                spreadsheet = workbook.createSheet("Online kirimlar royxati");
+                spreadsheet = workbook.createSheet("Список онлайн-квитанций");
 
                 XSSFRow row;
 
@@ -189,7 +187,7 @@ public class AdminService {
 
                 try {
 
-                    FileOutputStream out = new FileOutputStream("online kirimlar ro`yxati.xlsx");
+                    FileOutputStream out = new FileOutputStream("список онлайн-заявок.xlsx");
                     workbook.write(out);
                     out.close();
 
@@ -202,9 +200,9 @@ public class AdminService {
 
         }
         try {
-            InputStream inputStream = new FileInputStream("online kirimlar ro`yxati.xlsx");
+            InputStream inputStream = new FileInputStream("список онлайн-заявок.xlsx");
             InputFile inputFile = new InputFile();
-            inputFile.setMedia(inputStream, "online kirimlar ro`yxati.xlsx");
+            inputFile.setMedia(inputStream, "список онлайн-заявок.xlsx");
 
             myTelegramBot.send(SendMsg.sendDoc(message.getChatId(), inputFile));
         } catch (FileNotFoundException e) {
@@ -215,33 +213,33 @@ public class AdminService {
 
     public void deleteDriver(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Iltimos Haydovchining telefon raqamini kiriting : *" +
-                        "\n*Masalan +998991234567 ✅*"));
+                "*Пожалуйста, введите номер телефона водителя : *" +
+                        "\n*Например +998991234567 ✅*"));
     }
 
     public void addDriver(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Iltimos Haydovchining ism va familiyasini kiriting : *" +
-                        "\n*Masalan Ismatov Hamdam ✅*"));
+                "*Пожалуйста, введите имя и фамилию водителя : *" +
+                        "\n*Например Исматов Хамдам ✅*"));
     }
 
     public void getDriverPhone(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Iltimos Haydovchining telefon raqamini quyidagi shakilda jo'nating :*\n" +
-                        "*Masalan +998971234567 ✅*"));
+                "*Пожалуйста, отправьте номер телефона водителя в форму ниже :*\n" +
+                        "*Например +998971234567 ✅*"));
     }
 
     public void claimMessage(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Muvaffaqqiyatli saqlandi ✅*"));
+                "*Успешно сохранено ✅*"));
 
         }
 
     public boolean checkPhone(Message message) {
         if (!message.getText().startsWith("+998") || message.getText().length() != 13) {
             myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                    "*Iltimos telefon raqamni quyidagi ko'rinishda kiriting !*" +
-                            "*\nMasalan : +998901234567  ✅*"));
+                    "*Пожалуйста, введите номер телефона в форму ниже !*" +
+                            "*\n : +998901234567  ✅*"));
             return false;
         }
 
@@ -249,7 +247,7 @@ public class AdminService {
             if (Character.isAlphabetic(message.getText().charAt(i))) {
                 myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
                         "*Iltimos telefon raqamni quyidagi ko'rinishda kiriting !*" +
-                                "*\nMasalan : +998901234567  ✅*"));
+                                "*\nНапример : +998901234567  ✅*"));
                 return false;
             }
         }
@@ -261,18 +259,18 @@ public class AdminService {
         var optional = profileRepository.findByPhone(message.getText());
         if (optional.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                    "*" + message.getText() + "*" + " *ushbu raqamga ega haydovchi topilmadi*"));
+                    "*" + message.getText() + "*" + " *Водитель с таким номером не найден*"));
             return false;
         }
         profileRepository.delete(optional.get());
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Muvaffaqqiyatli o'chirildi ✅*"));
+                "*Удалено успешно ✅*"));
         return true;
     }
 
     public void setting(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*ADMIN VA HAYDOVCHI BO'LIMI*",
+                "*РАЗДЕЛ АДМИНИСТРАТОРА И ВОДИТЕЛЯ*",
                 Button.markup(Button.rowList(
                         Button.row(Button.button(ButtonName.addDriver)),
                         Button.row(Button.button(ButtonName.deleteDriver)),
@@ -286,7 +284,7 @@ public class AdminService {
         var list = profileRepository.findAllByRole(ProfileRole.DRIVER);
         if (list.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                    "*Haydovchilar royxati mavjud emas*"));
+                    "*Нет списка драйверов*"));
             return;
         }
 
@@ -301,7 +299,7 @@ public class AdminService {
             if (entity != null) {
                 XSSFWorkbook workbook = new XSSFWorkbook();
                 XSSFSheet spreadsheet;
-                spreadsheet = workbook.createSheet("Haydovchilar royxati");
+                spreadsheet = workbook.createSheet("Список водителей");
 
                 XSSFRow row;
 
@@ -323,7 +321,7 @@ public class AdminService {
 
                 try {
 
-                    FileOutputStream out = new FileOutputStream("haydovchilar ro`yxati.xlsx");
+                    FileOutputStream out = new FileOutputStream("Список водителей.xlsx");
                     workbook.write(out);
                     out.close();
 
@@ -337,9 +335,9 @@ public class AdminService {
         }
 
         try {
-            InputStream inputStream = new FileInputStream("haydovchilar ro`yxati.xlsx");
+            InputStream inputStream = new FileInputStream("Список водителей.xlsx");
             InputFile inputFile = new InputFile();
-            inputFile.setMedia(inputStream, "haydovchilar ro`yxati.xlsx");
+            inputFile.setMedia(inputStream, "Список водителей.xlsx");
 
             myTelegramBot.send(SendMsg.sendDoc(message.getChatId(), inputFile));
         } catch (FileNotFoundException e) {
@@ -349,13 +347,13 @@ public class AdminService {
 
     public void onlineOrder(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Iltimos registratsiyadan o'tkazish uchun telefon raqamni quyidagi shakilda kiriting :*" +
-                        "\n*Masalan : +998971234567 ✅*"));
+                "*Пожалуйста, введите свой номер телефона в форму ниже, чтобы зарегистрироваться :*" +
+                        "\n*Например : +998971234567 ✅*"));
     }
 
     public void getFullNameOffline(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Iltimos registratsiyadan o'tkazish uchun ism va familiya kiriting : *" +
-                        "\n*Masalan : Ismatov Hamdam *"));
+                "*Пожалуйста, введите ваше имя и фамилию для регистрации : *" +
+                        "\n* Например: Ismatov Hamdam *"));
     }
 }

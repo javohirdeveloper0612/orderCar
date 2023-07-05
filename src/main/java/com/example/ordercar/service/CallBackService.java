@@ -1,5 +1,4 @@
 package com.example.ordercar.service;
-
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.util.CalendarUtil;
 import com.example.ordercar.util.SendMsg;
@@ -25,7 +24,7 @@ public class CallBackService {
         EditMessageText editMessageText = new EditMessageText();
         editMessageText.setChatId(message.getChatId());
         editMessageText.setMessageId(message.getMessageId());
-        editMessageText.setText("*Iltimos, buyurtma bermoqchi bo'lgan sanani tanlang!*");
+        editMessageText.setText("*Пожалуйста, выберите дату, которую вы хотите заказать !*");
         editMessageText.setParseMode("Markdown");
         editMessageText.setReplyMarkup(calendarUtil.makeYearKeyBoard(year, month));
         myTelegramBot.send(editMessageText);
@@ -41,26 +40,26 @@ public class CallBackService {
 
     public void getPayMe(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParseEdite(message.getChatId(),
-                "\uD83D\uDD22 *To'lov miqdorini kiriting minimal 1000: (UZS)*", message.getMessageId()));
+                "\uD83D\uDD22 *Введите сумму платежа минимум 1000: (UZS)*", message.getMessageId()));
     }
 
     public void getClick(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Hozircha botimiz Clickni qo'llab quvvatlamaydi *" +
-                        " *Tez orada ushbu funksiya ishga tushadi *"));
+                "*В настоящее время наш бот не поддерживает Click *" +
+                        " *Эта функция будет доступна в ближайшее время ! *"));
 
     }
 
     public void getHumo(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Hozircha botimiz Humoni qo'llab quvvatlamaydi.*" +
-                        " * Tez orada ushbu funksiya ishga tushadi *"));
+                "*В настоящее время наш бот не поддерживает Humo*" +
+                        " * Эта функция будет доступна в ближайшее время ! *"));
     }
 
     public void getUzum(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Hozircha botimiz Uzumni qo'llab quvvatlamaydi.*" +
-                        " * Tez orada ushbu funksiya ishga tushadi *"));
+                "*В настоящее время наш бот не поддерживает УЗУМ*" +
+                        " * Эта функция будет доступна в ближайшее время !  *"));
 
     }
 

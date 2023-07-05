@@ -20,6 +20,7 @@ public class AdminController {
 
 
     public void handle(Update update) {
+
         if (update.hasMessage()) {
             textController.handle(update);
         } else if (update.hasCallbackQuery()) {

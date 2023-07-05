@@ -1,5 +1,4 @@
 package com.example.ordercar.admin.controller;
-
 import com.example.ordercar.admin.button.ButtonName;
 import com.example.ordercar.admin.service.AdminService;
 import com.example.ordercar.entity.LocationClient;
@@ -13,11 +12,11 @@ import com.example.ordercar.repository.OrderClientRepository;
 import com.example.ordercar.repository.ProfileRepository;
 import com.example.ordercar.service.TransportUslugaService;
 import com.example.ordercar.util.*;
+import com.example.ordercar.util.InlineButton;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +44,12 @@ public class TextController {
     }
 
     public void handle(Update update) {
+
         Message message = update.getMessage();
         TelegramUsers step = saveUser(message.getChatId());
+
         if (message.hasText()) {
+
             if (message.getText().equals("/start")) {
                 adminService.mainMenu(message);
                 step.setStep(Step.MAIN);
@@ -58,11 +60,12 @@ public class TextController {
             }
 
             if (step.getStep().equals(Step.MAIN)) {
+
                 switch (message.getText()) {
+
                     case ButtonName.onlineOrder -> {
                         adminService.onlineOrder(message);
                         step.setStep(Step.GETPHONEOFFLINE);
-
                     }
                     case ButtonName.activeOrder -> adminService.activeOrder(message);
                     case ButtonName.notactiveOrder -> adminService.notActiveOrder(message);
@@ -70,22 +73,29 @@ public class TextController {
                     case ButtonName.setting -> {
                         adminService.setting(message);
                         step.setStep(Step.SETTING);
+
                     }
                 }
+
             } else if (step.getStep().equals(Step.GETPHONEOFFLINE)) {
+
                 if (adminService.checkPhone(message)) {
                     client.setPhone(message.getText());
                     adminService.getFullNameOffline(message);
                     step.setStep(Step.GETFULLNAMEOFFLINE);
                 }
+
             } else if (step.getStep().equals(Step.GETFULLNAMEOFFLINE)) {
+
                 client.setFullName(message.getText());
                 uslugaService.replyStart(message.getChatId());
             }
 
 
             if (step.getStep().equals(Step.SETTING)) {
+
                 switch (message.getText()) {
+
                     case ButtonName.addDriver -> {
                         adminService.addDriver(message);
                         step.setStep(Step.GETFULLNAME);
@@ -97,18 +107,21 @@ public class TextController {
                     case ButtonName.listOfDriver -> {
                         adminService.listOfDriver(message);
                     }
-
                     case ButtonName.back -> {
                         adminService.mainMenu(message);
                         step.setStep(Step.MAIN);
                     }
 
                 }
+
             } else if (step.getStep().equals(Step.GETFULLNAME)) {
+
                 profile.setFullName(message.getText());
                 adminService.getDriverPhone(message);
                 step.setStep(Step.GETPHONE);
+
             } else if (step.getStep().equals(Step.GETPHONE)) {
+
                 if (adminService.checkPhone(message)) {
                     profile.setPhone(message.getText());
                     profile.setRole(ProfileRole.DRIVER);
@@ -118,7 +131,9 @@ public class TextController {
                     adminService.mainMenu(message);
                     step.setStep(Step.MAIN);
                 }
+
             } else if (step.getStep().equals(Step.DELETEDRIVER)) {
+
                 if (adminService.checkPhone(message)) {
                     if (adminService.claimDeleting(message)) {
                         adminService.setting(message);
@@ -128,12 +143,17 @@ public class TextController {
                         step.setStep(Step.SETTING);
                     }
                 }
+
             } else if (step.getStep().equals(Step.GETFROMWHERELOCATION)) {
+
                 getFromWhereLocation(message);
             } else if (step.getStep().equals(Step.GETTOWHERELOCATION)) {
+
                 getToWhereLocation(message);
             }
+
         } else if (message.hasLocation()) {
+
             if (step.getStep().equals(Step.GETTOWHERELOCATION)) {
                 client.setToWhere(getCurrentLocation(message));
                 client.setPayment(Payment.NAQD);
@@ -145,7 +165,9 @@ public class TextController {
 
                 adminService.mainMenu(message);
                 step.setStep(null);
+
             } else {
+
                 client.setFromWhere(getCurrentLocation(message));
                 getToWhereLocation(message);
                 saveUser(message.getChatId()).setStep(Step.GETTOWHERELOCATION);
@@ -164,7 +186,7 @@ public class TextController {
 
     private void getToWhereLocation(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Mashina qayerga boradi ? Iltimos locatsiya ulashing !*"));
+                "*Куда едет машина? Пожалуйста, поделитесь местоположением!*"));
     }
 
     public TelegramUsers saveUser(Long chatId) {
@@ -183,7 +205,7 @@ public class TextController {
         Boolean exists = orderClientRepository.existsByOrderDate(date);
         if (exists) {
             myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                    "*Kechirasiz, ushbu  sana band qilingan. Boshqa sanani tanlang!*"));
+                    "*Извините, эта дата забронирована. Выберите другую дату!*"));
             uslugaService.replyStart(message.getChatId());
 
         } else {
@@ -194,7 +216,7 @@ public class TextController {
     }
 
     public void getFromWhereLocation(Message message) {
-        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(), "*Mashina qayerdan yo'lga chiqadi ? Iltimos locatsiya ulashing !*"));
+        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(), "*Откуда выезжает машина? Пожалуйста, поделитесь местоположением!*"));
 
     }
 
@@ -221,7 +243,7 @@ public class TextController {
                         "\n*Status :* " + client.getStatus() + "" +
                         "\n*To'lov turi : * " + client.getPayment(),
                 InlineButton.keyboardMarkup(InlineButton.rowList(
-                        InlineButton.row(InlineButton.button("Buyurtmani qabul qilish ✅", "accept_order#" + client.getId()))))));
+                        InlineButton.row(InlineButton.button("Прием заказа ✅", "accept_order#" + client.getId()))))));
 
     }
 

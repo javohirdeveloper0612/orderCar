@@ -1,10 +1,10 @@
 package com.example.ordercar.controller;
-
 import com.example.ordercar.entity.ProfileEntity;
 import com.example.ordercar.enums.Status;
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.service.AuthService;
 import com.example.ordercar.util.*;
+import com.example.ordercar.util.Button;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -42,7 +42,7 @@ public class AuthController {
             if (users.getStep().equals(Step.NONE)) {
                 profileEntity.setFullName(message.getText());
                 myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                        "Iltimos raqamingizni yuboring",
+                        "Пожалуйста, пришлите свой номер !",
                         Button.markup(Button.rowList(Button.row(
                                 Button.button()
                         )))));
@@ -54,14 +54,14 @@ public class AuthController {
 
                 if (!checkPhone(message.getText())) {
                     myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                            "Iltimos telefon raqamni to'g'ri kiriting ! "));
+                            "Пожалуйста, введите правильный номер телефона ! "));
                     return;
                 }
 
                 if (checkPhoneExists(message.getText())) {
                     myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                            "Bu raqam ro'yxatdan o'tmagan \n" +
-                                    "Iltimos qaytadan kiriting "));
+                            "Этот номер не зарегистрирован \n" +
+                                    "Пожалуйста, введите повторно "));
                     return;
                 }
 
@@ -71,7 +71,7 @@ public class AuthController {
                 profileEntity.setPhone(message.getText());
                 authService.createProfile(profileEntity);
                 SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(message.getText()), smsCode);
-                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Tasdiqlash xabar yuborildi kodni kiriting !"));
+                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Подтверждение отправлено, введите код !"));
 
                 users.setStep(Step.PASSWORD);
                 return;
@@ -79,16 +79,16 @@ public class AuthController {
             if (users.getStep().equals(Step.PASSWORD)) {
                 if (!profileEntity.getSmsCode().equals(MD5.md5(message.getText()))) {
                     myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                            "Parolni xato kiritdingiz iltimos qaytadan urinib koring ! "));
+                            "Вы ввели неверный пароль, попробуйте еще раз ! "));
                     return;
                 }
                 System.out.println(profileEntity.getPhone());
                 authService.saveUserId(profileEntity.getPhone(), message.getChatId());
 
                 myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                        "Muvaffaqiyatli ruyhatdan o'tdingiz",
+                        "Вы успешно зарегистрировались\"",
                         Button.markup(Button.rowList(
-                                Button.row(Button.button("Asosiy Menyu !"))
+                                Button.row(Button.button("Главное меню !"))
                         ))));
                 users.setStep(Step.NONE);
                 stepMain.setStep(null);
@@ -97,8 +97,8 @@ public class AuthController {
         } else if (message.hasContact()) {
             if (checkPhoneExists(message.getContact().getPhoneNumber())) {
                 myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                        "Bu raqam ro'yxatdan o'tmagan \n" +
-                                "Iltimos qaytadan kiriting "));
+                        "Этот номер не зарегистрирован \n" +
+                                "Пожалуйста, введите повторно "));
                 return;
             }
 
@@ -108,7 +108,7 @@ public class AuthController {
             profileEntity.setPhone(message.getContact().getPhoneNumber());
             authService.createProfile(profileEntity);
             SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(message.getContact().getPhoneNumber()), smsCode);
-            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Tasdiqlash xabar yuborildi kodni kiriting !"));
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Подтверждение отправлено, введите код !"));
             users.setStep(Step.PASSWORD);
 
         }

@@ -1,5 +1,4 @@
 package com.example.ordercar.service;
-
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.util.Button;
 import com.example.ordercar.util.ButtonName;
@@ -46,18 +45,18 @@ public class MainService {
 
     public void metallBuyumMenu(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Ushbu funksiya tez orada ishga tushadi *"));
+                "*Эта функция скоро появится ! *"));
     }
 
     public void metalProkatMenu(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Ushbu funksiya tez orada ishga tushadi prokat *"));
+                "*Эта функция будет доступна в ближайшее время *"));
     }
 
     public void help(Message message) {
         myTelegramBot.send(
                 SendMsg.sendMsgParse(message.getChatId(),
-                        "*Ushbu funksiya tez orada ishga tushadi*"));
+                        "*Эта функция скоро появится *"));
     }
 
     public void dataCar(Message message) {
@@ -69,7 +68,7 @@ public class MainService {
 
     public void dataVoditel(Message message) {
         myTelegramBot.send(
-                SendMsg.sendMsg(message.getChatId(), "*Ushbu funksiya tez orada isha tushadi*")
+                SendMsg.sendMsg(message.getChatId(), "*Эта функция скоро появится*")
         );
     }
 
@@ -102,7 +101,7 @@ public class MainService {
 
     public void setting(Message message) {
         myTelegramBot.send(
-                SendMsg.sendMsg(message.getChatId(), "*Ushbu funksiya tez orada isha tushadi*")
+                SendMsg.sendMsg(message.getChatId(), "*Эта функция скоро появится*")
         );
     }
 }

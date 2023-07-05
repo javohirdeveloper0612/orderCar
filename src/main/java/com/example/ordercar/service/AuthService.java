@@ -1,6 +1,4 @@
 package com.example.ordercar.service;
-
-import com.example.ordercar.entity.OrderClientEntity;
 import com.example.ordercar.entity.ProfileEntity;
 import com.example.ordercar.enums.Status;
 import com.example.ordercar.repository.ProfileRepository;

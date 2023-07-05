@@ -1,5 +1,4 @@
 package com.example.ordercar.controller;
-
 import com.example.ordercar.entity.LocationClient;
 import com.example.ordercar.entity.OrderClientEntity;
 import com.example.ordercar.entity.ProfileEntity;
@@ -13,10 +12,11 @@ import com.example.ordercar.service.MainService;
 import com.example.ordercar.service.OrderClientService;
 import com.example.ordercar.service.TransportUslugaService;
 import com.example.ordercar.util.*;
+import com.example.ordercar.util.ButtonName;
+import com.example.ordercar.util.InlineButton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.telegram.telegrambots.meta.api.objects.Message;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,8 +48,6 @@ public class TransportUslugaController {
         this.orderClientService = orderClientService;
         this.orderClientRepository = orderClientRepository;
         this.myTelegramBot = myTelegramBot;
-
-
         this.profileRepository = profileRepository;
     }
 
@@ -67,6 +65,7 @@ public class TransportUslugaController {
             switch (transportStep.getStep()) {
                 case TRANSPORT -> {
                     switch (message.getText()) {
+
                         case ButtonName.priceList -> transportService.priceData(message);
                         case ButtonName.orderCar -> {
                             transportService.orderCar(message);
@@ -105,7 +104,7 @@ public class TransportUslugaController {
                         transportStep.setStep(Step.GETFULLNAME);
                     } else {
                         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                                "*Tasdiqlash kodi xato. Iltimos, qayta kiriting*"));
+                                "*Код подтверждения неверен. Пожалуйста, введите повторно*"));
                     }
                 }
                 case GETFULLNAME -> {
@@ -128,29 +127,34 @@ public class TransportUslugaController {
 
             }
         } else if (message.hasContact()) {
+
             sendContact(message);
             transportStep.setStep(Step.CHECKSMS);
+
         } else if (message.hasLocation()) {
+
             if (transportStep.getStep().equals(Step.GETTOWHERELOCATION)) {
                 orderClient.setToWhere(getCurrentLocation(message));
                 transportStep.setStep(null);
                 getPayment(message);
+
             } else {
+
                 orderClient.setFromWhere(getCurrentLocation(message));
                 getToWhereLocation(message);
                 saveUser(message.getChatId()).setStep(Step.GETTOWHERELOCATION);
+
             }
-
-
         }
     }
 
     private boolean checkMoney(Message message) {
+
         String text = message.getText();
         for (int i = 0; i < text.length(); i++) {
             if (Character.isAlphabetic(text.charAt(i)) || text.length() < 4) {
                 myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                        "\uD83D\uDD22 *To'lov miqdorini kiriting minimal 1000: (UZS)*"));
+                        "\uD83D\uDD22 *Введите сумму платежа минимум 1000: (UZS)*"));
                 return false;
             }
         }
@@ -160,20 +164,22 @@ public class TransportUslugaController {
 
     private void getToWhereLocation(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Mashina qayerga boradi ? Iltimos locatsiya ulashing !*"));
+                "*Куда едет машина? Пожалуйста, поделитесь местоположением!*"));
     }
 
     private void getPayment(Message message) {
+
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Iltimos o'zingizga qulay bo'lgan to'lov tizimini tanlang*",
+                "*Пожалуйста, выберите удобную для вас платежную систему*",
                 InlineButton.keyboardMarkup(InlineButton.rowList(
-                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  PAYME(Avto to'lov)", "payme")),
-                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  NAQD PUL", "naqd")),
-                        InlineButton.row(InlineButton.button("⬅️ ORQAGA", "back"))
+                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  PAYME (Автоплатеж)", "payme")),
+                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  НАЛИЧНЫЕ ", "naqd")),
+                        InlineButton.row(InlineButton.button("⬅️ НАЗАД", "back"))
                 ))));
     }
 
     public LocationClient getCurrentLocation(Message message) {
+
         Double latitude = message.getLocation().getLatitude();
         Double longitude = message.getLocation().getLongitude();
         LocationClient locationClient = new LocationClient();
@@ -191,7 +197,7 @@ public class TransportUslugaController {
         Boolean exists = orderClientRepository.existsByOrderDate(localDate);
         if (exists) {
             myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                    "*Kechirasiz, ushbu  sana band qilingan. Boshqa sanani tanlang!*"));
+                    "*Извините, эта дата забронирована. Выберите другую дату!*"));
             transportService.replyStart(message.getChatId());
 
         } else {
@@ -202,11 +208,12 @@ public class TransportUslugaController {
     }
 
     public void getFromWhereLocation(Message message) {
-        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(), "*Mashina qayerdan yo'lga chiqadi ? Iltimos locatsiya ulashing !*"));
+        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(), "*Откуда выезжает машина? Пожалуйста, поделитесь местоположением!*"));
 
     }
 
     public TelegramUsers saveUser(Long chatId) {
+
         for (TelegramUsers users : usersList) {
             if (users.getChatId().equals(chatId)) {
                 return users;
@@ -219,18 +226,20 @@ public class TransportUslugaController {
     }
 
     public void sendSmsCode(Message message) {
+
         String randomNumber = RandomUtil.getRandomNumber();
         String phone = message.getText();
         orderClient.setSmsCode(randomNumber);
         orderClient.setPhone(phone);
         SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(phone), randomNumber);
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*" + phone + "*" + "* ushbu raqamga tasdiqlash kodi yuborildi !*" +
-                        "*\nIltimos tasdiqlash kodini kiriting  ✅*"));
+                "*" + phone + "*" + "* Код подтверждения был отправлен на этот номер!*" +
+                        "*\nПожалуйста, введите проверочный код  ✅*"));
     }
 
 
     public void sendContact(Message message) {
+
         String randomNumber = RandomUtil.getRandomNumber();
         String phone = message.getContact().getPhoneNumber();
         orderClient.setSmsCode(randomNumber);
@@ -238,14 +247,15 @@ public class TransportUslugaController {
         orderClient.setChatId(message.getChatId());
         SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(phone), randomNumber);
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*" + phone + "*" + "* ushbu raqamga tasdiqlash kodi yuborildi !*" +
-                        "*\nIltimos tasdiqlash kodini kiriting  ✅*"));
+                "*" + phone + "*" + "*Код подтверждения был отправлен на этот номер! *" +
+                        "*\nПожалуйста, введите проверочный код  ✅*"));
 
     }
 
     public void getCash(Message message) {
+
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Buyurtmangiz qabul qilindi ! Tez orada mutaxasislarimisz siz bilan boglanadi*"));
+                "*Ваш заказ принят! Наши специалисты свяжутся с вами в ближайшее время*"));
         orderClient.setPayment(Payment.NAQD);
         orderClient.setStatus(Status.ACTIVE);
         saveUser(message.getChatId()).setStep(null);
@@ -255,6 +265,7 @@ public class TransportUslugaController {
     }
 
     public void sendOrder(OrderClientEntity save) {
+
         var list = profileRepository.findAllByRole(ProfileRole.DRIVER);
         if (list.isEmpty()) {
             return;
@@ -293,16 +304,16 @@ public class TransportUslugaController {
     public boolean checkPhone(Message message) {
         if (!message.getText().startsWith("+998") || message.getText().length() != 13) {
             myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                    "*Iltimos telefon raqamni quyidagi ko'rinishda kiriting !*" +
-                            "*\nMasalan : +998901234567  ✅*"));
+                    "*Пожалуйста, введите номер телефона в форму ниже!*" +
+                            "*\nНапример : +998901234567  ✅*"));
             return false;
         }
 
         for (int i = 0; i < message.getText().length(); i++) {
             if (Character.isAlphabetic(message.getText().charAt(i))) {
                 myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                        "*Iltimos telefon raqamni quyidagi ko'rinishda kiriting !*" +
-                                "*\nMasalan : +998901234567  ✅*"));
+                        "*Пожалуйста, введите номер телефона в форму ниже!*" +
+                                "*\nНапример : +998901234567  ✅*"));
                 return false;
             }
         }

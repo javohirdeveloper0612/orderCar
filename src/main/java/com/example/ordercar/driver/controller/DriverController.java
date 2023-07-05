@@ -1,24 +1,15 @@
-package com.example.ordercar.controller;
+package com.example.ordercar.driver.controller;
 
 import com.example.ordercar.mytelegram.MyTelegramBot;
-import com.example.ordercar.service.DriverService;
+import com.example.ordercar.driver.service.DriverService;
 import com.example.ordercar.util.ButtonName;
 import com.example.ordercar.util.SendMsg;
 import com.example.ordercar.util.TelegramUsers;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
-import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputLocationMessageContent;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputMessageContent;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,10 +55,10 @@ public class DriverController {
                         return;
                     }
                 }
-                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Siz noto'g'ri buyruq kiritdingiz*"));
+                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Вы ввели неверную команду*"));
                 return;
             }
-            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Siz noto'g'ri buyruq kiritdingiz*"));
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Вы ввели неверную команду*"));
         }
     }
 

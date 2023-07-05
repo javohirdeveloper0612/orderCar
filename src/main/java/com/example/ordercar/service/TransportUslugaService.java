@@ -1,13 +1,14 @@
 package com.example.ordercar.service;
-
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.util.*;
+import com.example.ordercar.util.Button;
+import com.example.ordercar.util.ButtonName;
+import com.example.ordercar.util.ButtonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-
 import java.time.LocalDate;
 
 @Service
@@ -26,21 +27,21 @@ public class TransportUslugaService {
 
     public void priceData(Message message) {
         myTelegramBot.send(
-                SendMsg.sendMsg(message.getChatId(), "*Ushbu funksiya tez orada ishga tushadi *")
+                SendMsg.sendMsg(message.getChatId(), "*Эта функция скоро появится *")
         );
     }
 
     public void orderCar(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Iltimos telefon raqamingizni quyidagi shakilda kiriting : " +
-                        "\nMasalan : +998901234567 ✅*",
+                "*Пожалуйста, введите свой номер телефона в форму ниже : " +
+                        "\nНапример : +998901234567 ✅*",
                 ButtonUtil.getContact()));
     }
 
     public void replyStart(Long chatId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
-        sendMessage.setText("*Iltimos, buyurtma bermoqchi bo'lgan sanani tanlang!*");
+        sendMessage.setText("*Пожалуйста, выберите дату, которую вы хотите заказать!*");
         sendMessage.setParseMode("Markdown");
         sendMessage.setReplyMarkup(calendarUtil.makeYearKeyBoard(LocalDate.now().getYear(), LocalDate.now().getMonthValue()));
         myTelegramBot.send(sendMessage);
