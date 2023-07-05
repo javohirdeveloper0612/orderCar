@@ -89,7 +89,7 @@ public class TransportUslugaController {
                             transportStep.setStep(Step.TRANSPORT);
                         }
                         case ButtonName.dataCar -> mainService.dataCar(message);
-                        case ButtonName.dataVoditel -> mainService.dataVoditel(message);
+                        case ButtonName.dataDriver -> mainService.dataVoditel(message);
                     }
                 }
                 case GETPHONE -> {
@@ -278,27 +278,27 @@ public class TransportUslugaController {
 
     public void sendDataToDriver(ProfileEntity entity, OrderClientEntity orderClient) {
         myTelegramBot.send(SendMsg.sendMsg(entity.getChatId(),
-                "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
-                        "\n*Buyurtma ID : * " + orderClient.getId() +
+                "        *>>>>>>>>>>>Заказ<<<<<<<<<<<* \n" +
+                        "\n*ID заказа : * " + orderClient.getId() +
                         "" +
-                        "\n*ISM VA FAMILIYA : * " + orderClient.getFullName() + "" +
-                        "\n*TELEFON RAQAM : * " + orderClient.getPhone() + "" +
-                        "\n*Buyurtma sanasi : * " + orderClient.getOrderDate() + "" +
-                        "\n*Status :* " + orderClient.getStatus() + "" +
-                        "\n*To'lov turi : * " + orderClient.getPayment(),
+                        "\n*Имя и фамилия : * " + orderClient.getFullName() + "" +
+                        "\n*Номер телефона : * " + orderClient.getPhone() + "" +
+                        "\n*Дата заказа : * " + orderClient.getOrderDate() + "" +
+                        "\n*Статус :* " + orderClient.getStatus() + "" +
+                        "\n*Тип оплаты : * " + orderClient.getPayment(),
                 InlineButton.keyboardMarkup(InlineButton.rowList(
-                        InlineButton.row(InlineButton.button("Buyurtmani qabul qilish ✅", "accept_order#" + orderClient.getId()))))));
+                        InlineButton.row(InlineButton.button("Прием заказа ✅", "accept_order#" + orderClient.getId()))))));
     }
 
 
     public void sendSms(OrderClientEntity orderClient, ProfileEntity entity) {
         SmsServiceUtil.sendSmsOrder(SmsServiceUtil.removePlusSign(entity.getPhone()),
-                ">>>>>>>>>>>Buyurtma<<<<<<<<<<<\n" +
-                        "\nISMI VA FAMILIYASI : " + orderClient.getFullName() + " " +
-                        "\nTELEFON RAQAMI : " + orderClient.getPhone() + " " +
-                        "\nBUYURTMA SANASI : " + orderClient.getOrderDate() + " " +
-                        "\nSTATUS :" + orderClient.getStatus() + " " +
-                        "\nTO'LOV TURI : " + orderClient.getPayment());
+                ">>>>>>>>>>>Заказ<<<<<<<<<<<\n" +
+                        "\nИмя и фамилия : " + orderClient.getFullName() + " " +
+                        "\nНомер телефона : " + orderClient.getPhone() + " " +
+                        "\nДата заказа : " + orderClient.getOrderDate() + " " +
+                        "\nСтатус :" + orderClient.getStatus() + " " +
+                        "\nТип оплаты  : " + orderClient.getPayment());
     }
 
     public boolean checkPhone(Message message) {

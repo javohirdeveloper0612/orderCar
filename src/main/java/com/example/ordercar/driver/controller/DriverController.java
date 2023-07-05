@@ -33,7 +33,7 @@ public class DriverController {
             if (message.hasText()) {
                 String text = message.getText();
 
-                if (text.equals("Asosiy Menyu !") || text.equals("/start")) {
+                if (text.equals("Главное меню !") || text.equals("/start")) {
                     driverService.menu(message);
                     return;
                 }

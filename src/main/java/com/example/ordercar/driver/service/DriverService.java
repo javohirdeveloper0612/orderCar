@@ -47,7 +47,7 @@ public class DriverService {
 
         boolean check = false;
 
-        var orderClientList = repository.findAllByStatus(Status.BLOCK);
+        var orderClientList = repository.findAllByStatusAndDriverId(Status.BLOCK,message.getChatId());
         if (orderClientList.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                     "*Выполненные заказы недоступны !*"));
@@ -56,8 +56,10 @@ public class DriverService {
 
         Map<Long, Object[]> patientData = new TreeMap<Long, Object[]>();
 
-        patientData.put(0L, new Object[]{"ID raqami ", " Ism va Familiyasi", "Telefon raqami",
-                "Buyurtma qilgan sana", "To'lov turi", "Status"});
+
+
+        patientData.put(0L, new Object[]{"Номер ID", "Имя и Фамилия", "Номер телефона",
+                "Дата заказа", "Тип оплаты", "Статус"});
 
         for (OrderClientEntity orderClient : orderClientList) {
 
@@ -130,16 +132,16 @@ public class DriverService {
 
         for (OrderClientEntity entity : orderClientList) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                    "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
-                            "\n*Buyurtma ID : * " + entity.getId() +
+                    "        *>>>>>>>>>>>Заказ<<<<<<<<<<<* \n" +
+                            "\n*ID заказа : * " + entity.getId() +
                             "" +
-                            "\n*ISM VA FAMILIYA : * " + entity.getFullName() + "" +
-                            "\n*TELEFON RAQAM : * " + entity.getPhone() + "" +
-                            "\n*Buyurtma sanasi : * " + entity.getOrderDate() + "" +
-                            "\n*Status :* " + entity.getStatus() + "" +
-                            "\n*To'lov turi : * " + entity.getPayment(),
+                            "\n*Имя и фамилия : * " + entity.getFullName() + "" +
+                            "\n*Номер телефона : * " + entity.getPhone() + "" +
+                            "\n*Дата заказа : * " + entity.getOrderDate() + "" +
+                            "\n*Статус :* " + entity.getStatus() + "" +
+                            "\n*Тип оплаты : * " + entity.getPayment(),
                     InlineButton.keyboardMarkup(InlineButton.rowList(
-                            InlineButton.row(InlineButton.button("окончание закята ✅", "finish_order#" + entity.getId())),
+                            InlineButton.row(InlineButton.button("Завершить заказ ✅", "finish_order#" + entity.getId())),
                             InlineButton.row(InlineButton.button("Адрес, откуда уходит машина \uD83D\uDCCD", "loc1#" + entity.getId())),
                             InlineButton.row(InlineButton.button("адрес назначения \uD83D\uDCCD", "loc2#" + entity.getId()))))));
 
@@ -166,21 +168,20 @@ public class DriverService {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), Integer.valueOf(parts[2])));
             }
 
-
-            myTelegramBot.send(SendMsg.editMessage(message.getChatId(),
-                    "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
-                            "\n*Buyurtma ID : * " + entity.getId() +
-                            "" +
-                            "\n*ISM VA FAMILIYA : * " + entity.getFullName() + "" +
-                            "\n*TELEFON RAQAM : * " + entity.getPhone() + "" +
-                            "\n*Buyurtma sanasi : * " + entity.getOrderDate() + "" +
-                            "\n*Status :* " + entity.getStatus() + "" +
-                            "\n*To'lov turi : * " + entity.getPayment(),
-                    InlineButton.keyboardMarkup(InlineButton.rowList(
-                            InlineButton.row(InlineButton.button("Завершить заказ ✅", "finish_order#" + entity.getId())),
-                            InlineButton.row(InlineButton.button("Адрес, откуда уходит машина \uD83D\uDCCD", "loc1#" + entity.getId() + "#" + locationMessageId)),
-                            InlineButton.row(InlineButton.button("Пункт назначения автомобиля \uD83D\uDCCD", "loc2#" + entity.getId() + "#" + locationMessageId)))), messageId));
-        }
+    myTelegramBot.send(SendMsg.editMessage(message.getChatId(),
+            "        *>>>>>>>>>>>Заказ<<<<<<<<<<<* \n" +
+            "\n*ID заказа : * " + entity.getId() +
+            "" +
+            "\n*Имя и фамилия : * " + entity.getFullName() + "" +
+            "\n*Номер телефона : * " + entity.getPhone() + "" +
+            "\n*Дата заказа : * " + entity.getOrderDate() + "" +
+            "\n*Статус :* " + entity.getStatus() + "" +
+            "\n*Тип оплаты : * " + entity.getPayment(),
+            InlineButton.keyboardMarkup(InlineButton.rowList(
+            InlineButton.row(InlineButton.button("Завершить заказ ✅", "finish_order#" + entity.getId())),
+            InlineButton.row(InlineButton.button("Адрес отправления машины \uD83D\uDCCD", "loc1#" + entity.getId() + "#" + locationMessageId)),
+            InlineButton.row(InlineButton.button("Пункт назначения автомобиля \uD83D\uDCCD", "loc2#" + entity.getId() + "#" + locationMessageId)))), messageId));
+}
     }
 
 
@@ -235,6 +236,7 @@ public class DriverService {
             orderClient.setDriverId(message.getChatId());
             repository.save(orderClient);
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Заказ получен успешно ✅"));
+            activeOrder(message);
 
         }
     }

@@ -17,6 +17,9 @@ public interface OrderClientRepository extends JpaRepository<OrderClientEntity, 
 
     List<OrderClientEntity> findAllByStatus(Status status);
 
+    List<OrderClientEntity> findAllByStatusAndDriverId(Status status,Long driverId);
+
+
 
     List<OrderClientEntity> findAllByPayment(Payment payment);
     @Query(value = "SELECT * FROM order_client WHERE (status = 'ACTIVE' AND driver_id = :id)", nativeQuery = true)

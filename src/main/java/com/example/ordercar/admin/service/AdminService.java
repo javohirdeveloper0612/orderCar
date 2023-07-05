@@ -65,16 +65,16 @@ public class AdminService {
 
         for (OrderClientEntity entity : list) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                    "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
-                            "\n*Buyurtma ID : * " + entity.getId() +
+                    "        *>>>>>>>>>>>Заказ<<<<<<<<<<<* \n" +
+                            "\n*ID заказа : * " + entity.getId() +
                             "" +
-                            "\n*ISM VA FAMILIYA : * " + entity.getFullName() + "" +
-                            "\n*TELEFON RAQAM : * " + entity.getPhone() + "" +
-                            "\n*Buyurtma sanasi : * " + entity.getOrderDate() + "" +
-                            "\n*Status :* " + entity.getStatus() + "" +
-                            "\n*To'lov turi : * " + entity.getPayment(),
+                            "\n*Имя и фамилия : * " + entity.getFullName() + "" +
+                            "\n*Номер телефона : * " + entity.getPhone() + "" +
+                            "\n*Дата заказа : * " + entity.getOrderDate() + "" +
+                            "\n*Статус :* " + entity.getStatus() + "" +
+                            "\n*Тип оплаты : * " + entity.getPayment(),
                     InlineButton.keyboardMarkup(InlineButton.rowList(
-                            InlineButton.row(InlineButton.button("окончание закята ✅", "accept_order")),
+                            InlineButton.row(InlineButton.button("Завершить заказ ✅", "accept_order")),
                             InlineButton.row(InlineButton.button("Адрес, откуда уходит машина \uD83D\uDCCD", "loc1")),
                             InlineButton.row(InlineButton.button("Пункт назначения автомобиля \uD83D\uDCCD", "loc2"))))));
 
@@ -91,15 +91,16 @@ public class AdminService {
 
         Map<Long, Object[]> patientData = new TreeMap<Long, Object[]>();
 
-        patientData.put(0L, new Object[]{"ID raqami ", " Ism va Familiyasi", "Telefon raqami",
-                "Buyurtma sanasi", "Status", "To'lov turi",});
+
+        patientData.put(0L, new Object[]{"Номер ID", "Имя и Фамилия", "Номер телефона",
+                "Дата заказа","Статус" , "Тип оплаты" , });
 
         for (OrderClientEntity entity : list) {
 
             if (entity != null) {
                 XSSFWorkbook workbook = new XSSFWorkbook();
                 XSSFSheet spreadsheet;
-                spreadsheet = workbook.createSheet("Завершенные закяты");
+                spreadsheet = workbook.createSheet("Список заказов");
 
                 XSSFRow row;
 
@@ -122,7 +123,7 @@ public class AdminService {
 
                 try {
 
-                    FileOutputStream out = new FileOutputStream("список завершенных закят.xlsx");
+                    FileOutputStream out = new FileOutputStream("Список заказов.xlsx");
                     workbook.write(out);
                     out.close();
 
@@ -135,9 +136,9 @@ public class AdminService {
         }
 
         try {
-            InputStream inputStream = new FileInputStream("список завершенных закят.xlsx");
+            InputStream inputStream = new FileInputStream("Список заказов.xlsx");
             InputFile inputFile = new InputFile();
-            inputFile.setMedia(inputStream, "список завершенных закят.xlsx");
+            inputFile.setMedia(inputStream, "Список заказов.xlsx");
 
             myTelegramBot.send(SendMsg.sendDoc(message.getChatId(), inputFile));
         } catch (FileNotFoundException e) {
@@ -156,15 +157,15 @@ public class AdminService {
 
         Map<Long, Object[]> paymentData = new TreeMap<Long, Object[]>();
 
-        paymentData.put(0L, new Object[]{"ID raqami ", " Ism va Familiyasi", "Telefon raqami",
-                "Buyurtma sanasi", "Status", "To'lov turi", "Tolov miqdori"});
+        paymentData.put(0L, new Object[]{"Номер ID", "Имя и Фамилия", "Номер телефона",
+                "Дата заказа","Статус" , "Тип оплаты" , "К оплате"});
 
 
         for (OrderClientEntity entity : payment) {
             if (entity != null) {
                 XSSFWorkbook workbook = new XSSFWorkbook();
                 XSSFSheet spreadsheet;
-                spreadsheet = workbook.createSheet("Список онлайн-квитанций");
+                spreadsheet = workbook.createSheet("список онлайн-заявок");
 
                 XSSFRow row;
 
@@ -246,7 +247,7 @@ public class AdminService {
         for (int i = 0; i < message.getText().length(); i++) {
             if (Character.isAlphabetic(message.getText().charAt(i))) {
                 myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                        "*Iltimos telefon raqamni quyidagi ko'rinishda kiriting !*" +
+                        "*Пожалуйста, введите номер телефона в форму ниже !*" +
                                 "*\nНапример : +998901234567  ✅*"));
                 return false;
             }
@@ -291,8 +292,7 @@ public class AdminService {
 
         Map<Long, Object[]> paymentData = new TreeMap<Long, Object[]>();
 
-        paymentData.put(0L, new Object[]{"ID raqami ", " Ism va Familiyasi", "Telefon raqami",
-                "ROLE"});
+        paymentData.put(0L, new Object[]{"Номер ID", "Имя и Фамилия", "Номер телефона", "РОЛЬ"});
 
 
         for (ProfileEntity entity : list) {

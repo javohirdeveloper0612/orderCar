@@ -55,10 +55,6 @@ public class TextController {
                 step.setStep(Step.MAIN);
             }
 
-            if (step.getStep() == null) {
-                step.setStep(Step.MAIN);
-            }
-
             if (step.getStep().equals(Step.MAIN)) {
 
                 switch (message.getText()) {

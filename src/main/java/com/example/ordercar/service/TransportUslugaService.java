@@ -53,7 +53,7 @@ public class TransportUslugaService {
                 SendMsg.sendMsg(message.getChatId(), "*Документ меню*",
                         Button.markup(
                                 Button.rowList(Button.row(
-                                                Button.button(ButtonName.dataVoditel),
+                                                Button.button(ButtonName.dataDriver),
                                                 Button.button(ButtonName.dataCar)
                                         ),
                                         Button.row(Button.button(ButtonName.backTransportMenu))

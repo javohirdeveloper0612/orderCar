@@ -11,12 +11,12 @@ public interface ButtonName {
     String backMainMenu = "назад  \uD83D\uDD19";
     String backTransportMenu = "назад  \uD83D\uDD19";
     String dataCar = "транспорт  данные \uD83D\uDCC4";
-    String dataVoditel = "информация о водителе \uD83D\uDCC4";
+    String dataDriver = "информация о водителе \uD83D\uDCC4";
     String contact = "контакт ☎️";
     String location = "локация \uD83D\uDCCD";
     String setting = "настройки ⚙️";
-    String activeOrder = "MENING BUYURTMAM ⌚";
-    String notActiveOrder = "TUGATILGAN BUYURTMALAR ✅";
-    String acceptOrder = "ACTIVE BUYURTMALAR ⌚";
+    String activeOrder = "МОЙ ЗАКАЗ \uD83D\uDCDC";
+    String notActiveOrder = "ВЫПОЛНЕННЫЕ ЗАКАЗЫ ✅";
+    String acceptOrder = "АКТИВНЫЕ ЗАКАЗЫ \uD83D\uDCDC";
 
 }
