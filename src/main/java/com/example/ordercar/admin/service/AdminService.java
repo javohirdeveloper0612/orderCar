@@ -106,7 +106,7 @@ public class AdminService {
                 XSSFRow row;
 
                 patientData.put(entity.getId(), new Object[]{entity.getId().toString(), entity.getFullName(),
-                        entity.getPhone(), entity.getOrderDate(), entity.getStatus(),
+                        entity.getPhone(), entity.getOrderDate().toString(), entity.getStatus().toString(),
                         entity.getPayment().toString()});
 
                 Set<Long> keyid = patientData.keySet();
@@ -234,7 +234,8 @@ public class AdminService {
     public void claimMessage(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                 "*Muvaffaqqiyatli saqlandi ✅*"));
-    }
+
+        }
 
     public boolean checkPhone(Message message) {
         if (!message.getText().startsWith("+998") || message.getText().length() != 13) {

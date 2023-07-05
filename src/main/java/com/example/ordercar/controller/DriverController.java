@@ -39,12 +39,10 @@ public class DriverController {
     public void handler(Update update) {
         if (update.hasMessage()) {
             Message message = update.getMessage();
-
-            var transportStep = saveUser(message.getChatId());
             if (message.hasText()) {
                 String text = message.getText();
 
-                if (text.equals("Asosiy Menyu !") || text.equals("/start")){
+                if (text.equals("Asosiy Menyu !") || text.equals("/start")) {
                     driverService.menu(message);
                     return;
                 }
@@ -53,20 +51,23 @@ public class DriverController {
 
                     case ButtonName.activeOrder -> {
                         driverService.activeOrder(message);
+                        return;
                     }
 
                     case ButtonName.notActiveOrder -> {
                         driverService.orderList(message);
+                        return;
                     }
 
                     case ButtonName.acceptOrder -> {
                         driverService.acceptOrderList(message);
+                        return;
                     }
                 }
-                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),"Siz noto'g'ri buyruq kiritdingiz"));
+                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Siz noto'g'ri buyruq kiritdingiz*"));
                 return;
             }
-            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),"Siz noto'g'ri buyruq kiritdingiz"));
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Siz noto'g'ri buyruq kiritdingiz*"));
         }
     }
 

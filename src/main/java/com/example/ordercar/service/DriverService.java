@@ -49,7 +49,12 @@ public class DriverService {
 
         boolean check = false;
 
-        Iterable<OrderClientEntity> orderClientList = repository.findAllByStatus(Status.BLOCK);
+        var orderClientList = repository.findAllByStatus(Status.BLOCK);
+        if (orderClientList.isEmpty()) {
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
+                    "*Tugatilgan buyurtmalar mavjud emas*"));
+            return;
+        }
 
         Map<Long, Object[]> patientData = new TreeMap<Long, Object[]>();
 
@@ -121,11 +126,11 @@ public class DriverService {
         var orderClientList = repository.findActiveOrders(message.getChatId());
 
         if (orderClientList.isEmpty()) {
-            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Hozirda Active buyurtmalar mavjud emas*"));
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Hozirda sizning buyurtingiz mavjud emas*"));
+            return;
         }
 
         for (OrderClientEntity entity : orderClientList) {
-
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                     "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
                             "\n*Buyurtma ID : * " + entity.getId() +
@@ -183,10 +188,10 @@ public class DriverService {
 
     public void acceptOrderList(Message message) {
 
-        List<OrderClientEntity> orderClientList = repository.findOrderByStatus();
+        var orderClientList = repository.findOrderByStatus();
 
         if (orderClientList.isEmpty()) {
-            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Hozirda Qabul qilinmagan buyurtmalar mavjud emas*"));
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Hozirda active  buyurtmalar mavjud emas*"));
             return;
         }
 

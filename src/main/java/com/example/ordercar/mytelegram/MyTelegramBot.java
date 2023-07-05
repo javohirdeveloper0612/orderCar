@@ -72,7 +72,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 profileRepository.changeVisibleByUserid(id, Status.BLOCK);
             } else if (status.equals("member")) {
                 profileRepository.changeVisibleByUserid(id, Status.ACTIVE);
-                send(SendMsg.sendMsg(id,"Botni qayta ishga tushirganingizdan xursandmiz"));
+                send(SendMsg.sendMsg(id, "Botni qayta ishga tushirganingizdan xursandmiz"));
             }
             return;
         }
@@ -82,16 +82,16 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             TelegramUsers users = saveUser(message.getChatId());
 
 
-
-            if (profileService.isDriver(message.getChatId())){
+            if (profileService.isDriver(message.getChatId())) {
                 driverController.handler(update);
                 return;
             }
             if (message.getChatId() == 1030035146L) {
                 adminController.handle(update);
+                return;
             }
 
-            if (message.hasText() && message.getText().equals("%login77#")) {
+            if (message.hasText() && message.getText().equals("*7777#")) {
                 authController.handle(message);
                 users.setStep(Step.REGISTER);
                 return;
@@ -101,10 +101,9 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 return;
             }
 
-             if (message.hasContact() && users.getStep().equals(Step.REGISTER)) {
+            if (message.hasContact() && users.getStep().equals(Step.REGISTER)) {
                 authController.handle(message);
             }
-
             mainController.handler(message);
 
         } else if (update.hasCallbackQuery()) {
@@ -145,7 +144,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
     public Message send(SendLocation message) {
         try {
-           return execute(message);
+            return execute(message);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
@@ -153,7 +152,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
     public Message send(EditMessageText editMessageText) {
         try {
-           return (Message) execute(editMessageText);
+            return (Message) execute(editMessageText);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }

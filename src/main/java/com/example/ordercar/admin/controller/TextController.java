@@ -12,9 +12,7 @@ import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.repository.OrderClientRepository;
 import com.example.ordercar.repository.ProfileRepository;
 import com.example.ordercar.service.TransportUslugaService;
-import com.example.ordercar.util.SendMsg;
-import com.example.ordercar.util.Step;
-import com.example.ordercar.util.TelegramUsers;
+import com.example.ordercar.util.*;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -141,8 +139,10 @@ public class TextController {
                 client.setPayment(Payment.NAQD);
                 client.setStatus(Status.ACTIVE);
                 orderClientRepository.save(client);
+                sendOrder();
                 client = new OrderClientEntity();
                 adminService.claimMessage(message);
+
                 adminService.mainMenu(message);
                 step.setStep(null);
             } else {
@@ -196,5 +196,44 @@ public class TextController {
     public void getFromWhereLocation(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(), "*Mashina qayerdan yo'lga chiqadi ? Iltimos locatsiya ulashing !*"));
 
+    }
+
+    public void sendOrder() {
+        var list = profileRepository.findAllByRole(ProfileRole.DRIVER);
+        if (list.isEmpty()) {
+            return;
+        }
+        for (ProfileEntity entity : list) {
+            order(entity);
+            sms(entity);
+        }
+
+    }
+
+    public void order(ProfileEntity entity) {
+        myTelegramBot.send(SendMsg.sendMsg(entity.getChatId(),
+                "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
+                        "\n*Buyurtma ID : * " + client.getId() +
+                        "" +
+                        "\n*ISM VA FAMILIYA : * " + client.getFullName() + "" +
+                        "\n*TELEFON RAQAM : * " + client.getPhone() + "" +
+                        "\n*Buyurtma sanasi : * " + client.getOrderDate() + "" +
+                        "\n*Status :* " + client.getStatus() + "" +
+                        "\n*To'lov turi : * " + client.getPayment(),
+                InlineButton.keyboardMarkup(InlineButton.rowList(
+                        InlineButton.row(InlineButton.button("Buyurtmani qabul qilish ✅", "accept_order#" + client.getId()))))));
+
+    }
+
+    public void sms(ProfileEntity entity) {
+        SmsServiceUtil.sendSmsOrder(SmsServiceUtil.removePlusSign(entity.getPhone()),
+                ">>>>>>>>>>>Buyurtma<<<<<<<<<<<\n" +
+                        "\nBuyurtma ID : " + client.getId() +
+                        "" +
+                        "\nISM VA FAMILIYA :  " + client.getFullName() + "" +
+                        "\nTELEFON RAQAM : " + client.getPhone() + "" +
+                        "\nBuyurtma sanasi : " + client.getOrderDate() + "" +
+                        "\nStatus : " + client.getStatus() + "" +
+                        "\nTo'lov turi : " + client.getPayment());
     }
 }

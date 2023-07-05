@@ -9,12 +9,8 @@ import com.example.ordercar.util.SendMsg;
 import com.example.ordercar.util.Step;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
-import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputLocationMessageContent;
 
 import java.time.LocalDate;
 
@@ -56,26 +52,14 @@ public class CallbackController {
         }
 
         switch (parts[0]) {
-            case "view_loc" -> {
-                myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), message.getMessageId()));
-                return;
-            }
+            case "view_loc" -> myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), message.getMessageId()));
 
-            case "finish_order" ->{
-                driverService.finishOrder(message,locationId,message.getMessageId());
-            }
+            case "finish_order" -> driverService.finishOrder(message,locationId,message.getMessageId());
 
-            case "loc1" -> {
-                driverService.getLocation(message, parts,message.getMessageId());
-            }
+            case "loc1", "loc2" -> driverService.getLocation(message, parts,message.getMessageId());
 
-            case "loc2" -> {
-                driverService.getLocation(message, parts,message.getMessageId());
-            }
+            case "accept_order" -> driverService.acceptOrder(message, locationId);
 
-            case "accept_order" -> {
-                driverService.acceptOrder(message, locationId);
-            }
             case "back" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 mainService.mainMenu(message);

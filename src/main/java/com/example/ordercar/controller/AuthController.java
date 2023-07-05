@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Controller
 public class AuthController {
 
@@ -20,7 +21,7 @@ public class AuthController {
     private final AuthService authService;
 
 
-    private List<TelegramUsers> usersList = new ArrayList<>();
+    private final List<TelegramUsers> usersList = new ArrayList<>();
     ProfileEntity profileEntity = new ProfileEntity();
 
     @Lazy
@@ -38,11 +39,8 @@ public class AuthController {
         TelegramUsers stepMain = myTelegramBot.saveUser(message.getChatId());
 
         if (message.hasText()) {
-
-
             if (users.getStep().equals(Step.NONE)) {
                 profileEntity.setFullName(message.getText());
-
                 myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                         "Iltimos raqamingizni yuboring",
                         Button.markup(Button.rowList(Button.row(
@@ -60,56 +58,7 @@ public class AuthController {
                     return;
                 }
 
-                if (!checkPhoneExists(message.getText())) {
-                    myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                            "Bu raqam ro'yxatdan o'tmagan \n" +
-                                    "Iltimos qaytadan kiriting "));
-                    return;
-                }
-
-                String smsCode  = RandomUtil.getRandomNumber();
-                profileEntity.setSmsCode(MD5.md5(smsCode));
-                profileEntity.setStatus(Status.NOTACTIVE);
-                profileEntity.setPhone(message.getText());
-
-                authService.createProfile(profileEntity);
-                SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(message.getText()),smsCode);
-
-                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),"Tasdiqlash xabar yuborildi kodni kiriting !"));
-
-                users.setStep(Step.PASSWORD);
-                return;
-            }
-
-            if (users.getStep().equals(Step.PASSWORD)) {
-
-
-                if (!profileEntity.getSmsCode().equals(MD5.md5(message.getText()))) {
-                    myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                            "Parolni xato kiritdingiz iltimos qaytadan urinib koring ! "));
-                    return;
-                }
-                System.out.println(profileEntity.getPhone());
-                authService.saveUserId(profileEntity.getPhone(),message.getChatId());
-
-                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                        "Muvaffaqiyatli ruyhatdan o'tdingiz",
-                        Button.markup(Button.rowList(
-                                Button.row(Button.button("Asosiy Menyu !"))
-                        ))));
-                users.setStep(Step.NONE);
-                stepMain.setStep(Step.NONE);
-                profileEntity = new ProfileEntity();
-            }
-
-            return;
-        }
-
-        if (message.hasContact()) {
-
-            if (users.getStep().equals(Step.PHONE)) {
-
-                if (!checkPhoneExists(message.getContact().getPhoneNumber())) {
+                if (checkPhoneExists(message.getText())) {
                     myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                             "Bu raqam ro'yxatdan o'tmagan \n" +
                                     "Iltimos qaytadan kiriting "));
@@ -119,36 +68,59 @@ public class AuthController {
                 String smsCode = RandomUtil.getRandomNumber();
                 profileEntity.setSmsCode(MD5.md5(smsCode));
                 profileEntity.setStatus(Status.NOTACTIVE);
-                profileEntity.setPhone(message.getContact().getPhoneNumber());
-
+                profileEntity.setPhone(message.getText());
                 authService.createProfile(profileEntity);
-                SmsServiceUtil.sendSmsOrder(SmsServiceUtil.removePlusSign(message.getContact().getPhoneNumber()),smsCode);
-
-                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),"Tasdiqlash xabar yuborildi kodni kiriting !"));
+                SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(message.getText()), smsCode);
+                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Tasdiqlash xabar yuborildi kodni kiriting !"));
 
                 users.setStep(Step.PASSWORD);
-
+                return;
             }
+            if (users.getStep().equals(Step.PASSWORD)) {
+                if (!profileEntity.getSmsCode().equals(MD5.md5(message.getText()))) {
+                    myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
+                            "Parolni xato kiritdingiz iltimos qaytadan urinib koring ! "));
+                    return;
+                }
+                System.out.println(profileEntity.getPhone());
+                authService.saveUserId(profileEntity.getPhone(), message.getChatId());
+
+                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
+                        "Muvaffaqiyatli ruyhatdan o'tdingiz",
+                        Button.markup(Button.rowList(
+                                Button.row(Button.button("Asosiy Menyu !"))
+                        ))));
+                users.setStep(Step.NONE);
+                stepMain.setStep(null);
+                profileEntity = new ProfileEntity();
+            }
+        } else if (message.hasContact()) {
+            if (checkPhoneExists(message.getContact().getPhoneNumber())) {
+                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
+                        "Bu raqam ro'yxatdan o'tmagan \n" +
+                                "Iltimos qaytadan kiriting "));
+                return;
+            }
+
+            String smsCode = RandomUtil.getRandomNumber();
+            profileEntity.setSmsCode(MD5.md5(smsCode));
+            profileEntity.setStatus(Status.NOTACTIVE);
+            profileEntity.setPhone(message.getContact().getPhoneNumber());
+            authService.createProfile(profileEntity);
+            SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(message.getContact().getPhoneNumber()), smsCode);
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Tasdiqlash xabar yuborildi kodni kiriting !"));
+            users.setStep(Step.PASSWORD);
+
         }
 
-
-    }
-
-
-    public boolean isExists(Message message) {
-        return authService.isExists(message.getChatId());
     }
 
     public boolean checkPhone(String text) {
-        if (text.startsWith("+998") && text.length() == 13 || text.startsWith("998") && text.length() == 12) {
-
-            return true;
-        }
-        return false;
+        return text.startsWith("+998") && text.length() == 13 || text.startsWith("998") && text.length() == 12;
     }
 
     public boolean checkPhoneExists(String text) {
-        return authService.isExists(text);
+        return !authService.isExists(text);
     }
 
     public TelegramUsers saveUser(Long chatId) {
@@ -158,7 +130,6 @@ public class AuthController {
                 return users;
             }
         }
-
 
         TelegramUsers users = new TelegramUsers();
         users.setChatId(chatId);
