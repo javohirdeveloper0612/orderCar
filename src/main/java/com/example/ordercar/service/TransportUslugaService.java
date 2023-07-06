@@ -27,7 +27,8 @@ public class TransportUslugaService {
 
     public void priceData(Message message) {
         myTelegramBot.send(
-                SendMsg.sendMsg(message.getChatId(), "*Эта функция скоро появится *")
+                SendMsg.sendDocument(message.getChatId(), "Информация о цене !",
+                        "BQACAgIAAxkBAAIVmWSmn7YGSxSMCFkjhmGywXYKhsmHAAMsAAI2GjlJJqfaMlcTXVYvBA")
         );
     }
 
@@ -59,5 +60,28 @@ public class TransportUslugaService {
                                         Button.row(Button.button(ButtonName.backTransportMenu))
                                 )))
         );
+    }
+
+    public void guideOrderCar(Message message) {
+
+        myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),"Инструкции по заказу  ❕❕❕\n" +
+                "\n" +
+                "\uD83D\uDD35 Введите номер телефона и подтвердите через SMS  \n" +
+                "\uD83D\uDD35 Введите полное имя и фамилию  \n" +
+                "\uD83D\uDD35 Выберите день, в который хотите заказать автомобиль  \n" +
+                "\uD83D\uDD35 Введите точный адрес точки отправки груза используя функцию «Telegram \uD83D\uDCCD Location»  \n" +
+                "\uD83D\uDD35 Введите точный адрес точки доставки груза используя функцию «Telegram \uD83D\uDCCD Location»  \n" +
+                "\uD83D\uDD35 Выберите удобный для вас вид оплаты  \n" +
+                "\uD83D\uDD35 Оплатить указанную цену  \n"+
+                "\uD83D\uDD35 Мы свяжемся с вами, как только ваш заказ будет успешно выполнен  \uD83E\uDD1D\n" +
+                "\n" +
+                "Осторожность  ❗️❗️❗️\n" +
+                "\n" +
+                "⛔️ Введите правильный номер телефона, там код подтверждения смс  \n" +
+                "⛔️ При отправке адреса пожалуйста будьте бдительны, необходимо указать правильный адрес, так как машина будет двигаться по указанному Вами адресу  \n" +
+                "⛔️ Дата, выбранная вами в календаре, не изменится. Будьте внимательны при выборе даты  \n" +
+                "⛔️ Пожалуйста, будьте внимательны при заказе  \uD83D\uDCAF\n" +
+                "\n" +
+                "-. Вы можете продолжить заказ  ✅⬇️"));
     }
 }

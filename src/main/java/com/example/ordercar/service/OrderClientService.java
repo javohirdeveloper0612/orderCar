@@ -1,5 +1,4 @@
 package com.example.ordercar.service;
-
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.util.InlineButton;
 import com.example.ordercar.util.SendMsg;
@@ -8,7 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +22,7 @@ public class OrderClientService {
     public void getFullName(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
                 "*Пожалуйста, введите ваше полное имя \n" +
-                        "Например: Коржабов Шахзод*"));
+                        "Например: Коржабов Шахзод* ✅"));
     }
 
     public ReplyKeyboardMarkup getLocation() {

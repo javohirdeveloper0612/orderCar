@@ -1,5 +1,4 @@
 package com.example.ordercar;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

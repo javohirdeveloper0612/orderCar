@@ -81,10 +81,10 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 return;
             }
 
-//            if(message.getChatId() == 5530157790L){
-//                adminController.handle(update);
+//           if(message.getChatId() == 5530157790L){
+//               adminController.handle(update);
 //                return;
-//            }
+//           }
 
             if (message.hasText() && message.getText().equals("*7777#")) {
                 authController.handle(message);

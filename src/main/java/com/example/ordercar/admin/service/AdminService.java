@@ -40,7 +40,7 @@ public class AdminService {
     public void mainMenu(Message message) {
 
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*ДОБРО ПОЖАЛОВАТЬ В МЕНЮ АДМИНИСТРАТОРА*",
+                "*Добро пожаловать в админку, выбирайте нужный вам раздел! *",
                 Button.markup(Button.rowList(
 
                         Button.row(Button.button(ButtonName.onlineOrder)),

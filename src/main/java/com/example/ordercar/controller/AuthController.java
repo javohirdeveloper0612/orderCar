@@ -8,7 +8,6 @@ import com.example.ordercar.util.Button;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.telegram.telegrambots.meta.api.objects.Message;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,6 @@ public class AuthController {
     private final MyTelegramBot myTelegramBot;
 
     private final AuthService authService;
-
 
     private final List<TelegramUsers> usersList = new ArrayList<>();
     ProfileEntity profileEntity = new ProfileEntity();

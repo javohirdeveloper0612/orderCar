@@ -68,8 +68,9 @@ public class TransportUslugaController {
 
                         case ButtonName.priceList -> transportService.priceData(message);
                         case ButtonName.orderCar -> {
+                            transportService.guideOrderCar(message);
                             transportService.orderCar(message);
-                            transportStep.setStep(Step.GETPHONE);
+                            transportStep.setStep(Step.GUIDE);
                         }
                         case ButtonName.document -> {
                             transportService.documentData(message);
@@ -79,7 +80,6 @@ public class TransportUslugaController {
                             mainService.mainMenu(message);
                             mainStep.setStep(Step.MAIN);
                         }
-
                     }
                 }
                 case DOCUMENT -> {
@@ -92,6 +92,7 @@ public class TransportUslugaController {
                         case ButtonName.dataDriver -> mainService.dataVoditel(message);
                     }
                 }
+
                 case GETPHONE -> {
                     if (checkPhone(message)) {
                         sendSmsCode(message);

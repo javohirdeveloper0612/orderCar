@@ -34,7 +34,7 @@ public class DriverService {
     public void menu(Message message) {
 
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Здравствуйте ! Выберите необходимое меню *",
+                "*Salom ! Kerakli menyuni tanlang *",
                 Button.markup(
                         Button.rowList(
                                 Button.row(Button.button(ButtonName.activeOrder),
@@ -50,7 +50,7 @@ public class DriverService {
         var orderClientList = repository.findAllByStatusAndDriverId(Status.BLOCK,message.getChatId());
         if (orderClientList.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                    "*Выполненные заказы недоступны !*"));
+                    "*Tugatilgan buyurtmalar mavjud emas !!!*"));
             return;
         }
 
@@ -105,7 +105,7 @@ public class DriverService {
         if (!check) {
 
             myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                    "*Нет списка заказов*"
+                    "*Buyurtmalar ro'yxati mavjud emas !!!*"
             ));
         } else {
             try {
@@ -126,13 +126,13 @@ public class DriverService {
         var orderClientList = repository.findActiveOrders(message.getChatId());
 
         if (orderClientList.isEmpty()) {
-            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Ваш заказ сейчас недоступен*"));
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Buyurtmangiz hozirda mavjud emas !!!*"));
             return;
         }
 
         for (OrderClientEntity entity : orderClientList) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                    "        *>>>>>>>>>>>Заказ<<<<<<<<<<<* \n" +
+                    "        *>>>>>>>>>>> Buyurtma <<<<<<<<<<<* \n" +
                             "\n*ID заказа : * " + entity.getId() +
                             "" +
                             "\n*Имя и фамилия : * " + entity.getFullName() + "" +
@@ -141,9 +141,9 @@ public class DriverService {
                             "\n*Статус :* " + entity.getStatus() + "" +
                             "\n*Тип оплаты : * " + entity.getPayment(),
                     InlineButton.keyboardMarkup(InlineButton.rowList(
-                            InlineButton.row(InlineButton.button("Завершить заказ ✅", "finish_order#" + entity.getId())),
-                            InlineButton.row(InlineButton.button("Адрес, откуда уходит машина \uD83D\uDCCD", "loc1#" + entity.getId())),
-                            InlineButton.row(InlineButton.button("адрес назначения \uD83D\uDCCD", "loc2#" + entity.getId()))))));
+                            InlineButton.row(InlineButton.button("Buyurtmani yakunlash ✅", "finish_order#" + entity.getId())),
+                            InlineButton.row(InlineButton.button("Mashina yukni oladigan manzil \uD83D\uDCCD", "loc1#" + entity.getId())),
+                            InlineButton.row(InlineButton.button("Mashina yukni olib boradigan manzil \uD83D\uDCCD", "loc2#" + entity.getId()))))));
 
 
         }
@@ -169,7 +169,7 @@ public class DriverService {
             }
 
     myTelegramBot.send(SendMsg.editMessage(message.getChatId(),
-            "        *>>>>>>>>>>>Заказ<<<<<<<<<<<* \n" +
+            "        *>>>>>>>>>>> Buyurtma <<<<<<<<<<<* \n" +
             "\n*ID заказа : * " + entity.getId() +
             "" +
             "\n*Имя и фамилия : * " + entity.getFullName() + "" +
@@ -190,7 +190,7 @@ public class DriverService {
         var orderClientList = repository.findOrderByStatus();
 
         if (orderClientList.isEmpty()) {
-            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*В настоящее время нет активных заказов*"));
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Hozirda faol buyurtmalar mavjud emas !!!*"));
             return;
         }
 
@@ -207,7 +207,7 @@ public class DriverService {
                             "\n*Status :* " + entity.getStatus() + "" +
                             "\n*To'lov turi : * " + entity.getPayment(),
                     InlineButton.keyboardMarkup(InlineButton.rowList(
-                            InlineButton.row(InlineButton.button("Прием заказа ✅", "accept_order#" + entity.getId()))))));
+                            InlineButton.row(InlineButton.button("Buyurtmani qabul qilish ✅", "accept_order#" + entity.getId()))))));
         }
     }
 
@@ -218,7 +218,7 @@ public class DriverService {
             OrderClientEntity entity = optional.get();
             entity.setStatus(Status.BLOCK);
             repository.save(entity);
-            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Заказ выполнен успешно ✅", messageId));
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Buyurtma muvaffaqiyatli yakunlandi ✅", messageId));
         }
     }
 
@@ -228,14 +228,14 @@ public class DriverService {
             OrderClientEntity orderClient = optional.get();
 
             if (orderClient.getDriverId() != null) {
-                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Этот заказ был принят другим водителем !"));
+                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Bu buyurtma boshqa haydovchi tomonidan qabul qilindi !!!"));
                 return;
             }
 
             orderClient.setStatus(Status.ACTIVE);
             orderClient.setDriverId(message.getChatId());
             repository.save(orderClient);
-            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Заказ получен успешно ✅"));
+            myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Buyurtma muvaffaqiyatli qabul qilindi  ✅"));
             activeOrder(message);
 
         }
