@@ -2,6 +2,7 @@ package com.example.controller;
 
 
 import com.example.driver.service.DriverService;
+import com.example.enums.Payment;
 import com.example.mytelegram.MyTelegramBot;
 import com.example.util.SendMsg;
 import com.example.util.Step;
@@ -93,7 +94,7 @@ public class CallbackController {
             }
             case "naqd" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
-                uslugaController.acceptOrder(message.getChatId(), Long.parseLong(parts[1]));
+                uslugaController.acceptOrder(message.getChatId(), Long.parseLong(parts[1]), Payment.NAQD);
             }
 
         }

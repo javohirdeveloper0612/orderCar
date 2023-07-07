@@ -300,15 +300,17 @@ public class TransportUslugaController {
 
     }
 
-    public void acceptOrder(Long chatId, Long orderId) {
+    public void acceptOrder(Long chatId, Long orderId, Payment payment) {
         Optional<OrderClientEntity> optional = orderClientRepository.findById(orderId);
         if (optional.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(chatId,
-                    "Something went wrong"));
+                    "Что-то пошло не так"));
+            return;
         }
         OrderClientEntity orderClient = optional.get();
         orderClient.setStatus(Status.ACTIVE);
-        orderClient.setPayment(Payment.NAQD);
+        orderClient.setPayment(payment);
+
 
         myTelegramBot.send(SendMsg.sendMsg(chatId,
                 "*Ваш заказ принят! Наши специалисты свяжутся с вами в ближайшее время*"));

@@ -45,10 +45,10 @@ public class OrderClientService {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Order already payed"));
             return;
         }
-        orderClient.setPayment(Payment.PLASTIK);
+
         orderClientRepository.save(orderClient);
-        InlineKeyboardButton button = new InlineKeyboardButton("▶️ To'lov qilish");
-        button.setUrl(paymentUtil.generatePaymentUrl(id, orderClient.getAmount()));
+        InlineKeyboardButton button = new InlineKeyboardButton("▶️ Оплата");
+        button.setUrl(paymentUtil.generatePaymentUrl(id,orderClient.getPhone(), orderClient.getAmount()));
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                 "*⬇️ Произведите оплату, перейдя по ссылке ниже и нажмите кнопку ✅ Проверить:*",
                 InlineButton.keyboardMarkup(InlineButton.rowList(

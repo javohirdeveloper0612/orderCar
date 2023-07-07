@@ -2,6 +2,7 @@ package com.example.payme.service.impl;
 
 import com.example.controller.TransportUslugaController;
 import com.example.entity.OrderClientEntity;
+import com.example.enums.Payment;
 import com.example.enums.Status;
 import com.example.payme.dto.request.*;
 import com.example.payme.dto.result.*;
@@ -108,7 +109,7 @@ public class MerchantService implements IMerchantService {
                 OrderClientEntity order = transaction.getOrder();
                 order.setStatus(Status.ACTIVE);
                 orderRepository.save(order);
-                transportUslugaController.acceptOrder(order.getChatId(), order.getId());
+                transportUslugaController.acceptOrder(order.getChatId(), order.getId(), Payment.PLASTIK);
 
                 transactionRepository.save(transaction);
                 return new PerformTransactionResult(transaction.getId().toString(), transaction.getPerformTime(), transaction.getState().getCode());
