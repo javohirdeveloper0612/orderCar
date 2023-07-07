@@ -25,19 +25,7 @@ public class OrderClientService {
                         "Например: Коржабов Шахзод* ✅"));
     }
 
-    public ReplyKeyboardMarkup getLocation() {
-        KeyboardButton locationButton = new KeyboardButton();
-        locationButton.setText("Share  location \uD83D\uDCCD");
-        locationButton.setRequestLocation(true);
-        KeyboardRow row = new KeyboardRow();
-        row.add(locationButton);
-        List<KeyboardRow> keyboard = new ArrayList<>();
-        keyboard.add(row);
-        ReplyKeyboardMarkup replyMarkup = new ReplyKeyboardMarkup();
-        replyMarkup.setKeyboard(keyboard);
-        replyMarkup.setResizeKeyboard(true);
-        return replyMarkup;
-    }
+
 
     public void getPayment(Message message) {
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),

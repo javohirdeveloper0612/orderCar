@@ -30,6 +30,9 @@ public class OrderClientEntity {
     private String phone;
 
     @Column
+    private Long amount;
+
+    @Column
     private String smsCode;
 
     @OneToOne(cascade = CascadeType.ALL)

@@ -55,8 +55,6 @@ public class DriverController {
                         return;
                     }
                 }
-                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Вы ввели неверную команду*"));
-                return;
             }
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "*Вы ввели неверную команду*"));
         }

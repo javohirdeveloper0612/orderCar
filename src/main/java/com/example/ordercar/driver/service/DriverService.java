@@ -198,7 +198,7 @@ public class DriverService {
 
 
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                    "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
+                    "        *>>>>>>>>>>> Buyurtma <<<<<<<<<<<* \n" +
                             "\n*Buyurtma ID : * " + entity.getId() +
                             "" +
                             "\n*ISM VA FAMILIYA : * " + entity.getFullName() + "" +

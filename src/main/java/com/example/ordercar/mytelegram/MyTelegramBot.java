@@ -17,6 +17,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -81,10 +82,10 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 return;
             }
 
-//           if(message.getChatId() == 5530157790L){
-//               adminController.handle(update);
-//                return;
-//           }
+     /*      if(message.getChatId() == 1024661500){
+               adminController.handle(update);
+                return;
+           }*/
 
             if (message.hasText() && message.getText().equals("*7777#")) {
                 authController.handle(message);
@@ -126,6 +127,13 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     }
 
     public void send(SendMessage message) {
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void send(SendPhoto message) {
         try {
             execute(message);
         } catch (TelegramApiException e) {

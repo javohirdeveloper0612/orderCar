@@ -4,11 +4,14 @@ import com.example.ordercar.entity.LocationClient;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+
+import java.io.File;
 
 
 public class SendMsg {
@@ -56,13 +59,28 @@ public class SendMsg {
     }
 
 
-    public static SendMessage sendMsgMark(Long chatId, String text, ReplyKeyboardMarkup markup) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setText(text);
-        sendMessage.setChatId(chatId);
-        sendMessage.setParseMode("Markdown");
-        sendMessage.setReplyMarkup(markup);
-        return sendMessage;
+    public static SendPhoto sendPhoto(Long id, String text) {
+        SendPhoto sendPhoto = new SendPhoto();
+
+        InputFile input = new InputFile(new File("attaches/price.jpg"));
+
+        sendPhoto.setChatId(id);
+        sendPhoto.setPhoto(input);
+        sendPhoto.setCaption(text);
+
+        return sendPhoto;
+    }
+
+    public static SendPhoto sendPhotoCarInfo(Long id, String text) {
+        SendPhoto sendPhoto = new SendPhoto();
+
+        InputFile input = new InputFile(new File("attaches/car-info.jpg"));
+
+        sendPhoto.setChatId(id);
+        sendPhoto.setPhoto(input);
+        sendPhoto.setCaption(text);
+
+        return sendPhoto;
     }
 
     public static SendDocument sendDocument(Long id, String text, String inputFile) {

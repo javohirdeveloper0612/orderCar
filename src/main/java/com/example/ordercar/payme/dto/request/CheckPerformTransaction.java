@@ -1,0 +1,15 @@
+package com.example.ordercar.payme.dto.request;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class CheckPerformTransaction {
+    private Integer amount;
+    private Account account;
+}

@@ -35,6 +35,8 @@ public class TransportUslugaController {
     private final ProfileRepository profileRepository;
 
 
+
+
     @Autowired
     public TransportUslugaController(MainService mainService,
                                      MainController mainController,
@@ -49,6 +51,7 @@ public class TransportUslugaController {
         this.orderClientRepository = orderClientRepository;
         this.myTelegramBot = myTelegramBot;
         this.profileRepository = profileRepository;
+
     }
 
 
@@ -57,6 +60,7 @@ public class TransportUslugaController {
         var mainStep = mainController.saveUser(message.getChatId());
 
         if (message.hasText()) {
+
 
             if (transportStep.getStep() == null) {
                 transportStep.setStep(Step.TRANSPORT);
@@ -68,9 +72,10 @@ public class TransportUslugaController {
 
                         case ButtonName.priceList -> transportService.priceData(message);
                         case ButtonName.orderCar -> {
+                            myTelegramBot.send(SendMsg.sendPhotoCarInfo(message.getChatId(),"Характеристики"));
                             transportService.guideOrderCar(message);
-                            transportService.orderCar(message);
-                            transportStep.setStep(Step.GUIDE);
+                            transportService.replyStart(message.getChatId());
+
                         }
                         case ButtonName.document -> {
                             transportService.documentData(message);
@@ -93,6 +98,7 @@ public class TransportUslugaController {
                     }
                 }
 
+
                 case GETPHONE -> {
                     if (checkPhone(message)) {
                         sendSmsCode(message);
@@ -110,12 +116,17 @@ public class TransportUslugaController {
                 }
                 case GETFULLNAME -> {
                     orderClient.setFullName(message.getText());
-                    transportService.replyStart(message.getChatId());
+                    double km =  KmUtil.calculateDistance(orderClient.getFromWhere(),orderClient.getToWhere());
+                    myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),"Расстояние от начальной точки автомобиля до пункта назначения автомобиля: " + km + " km"));
+
+                    myTelegramBot.send(SendMsg.sendPhoto(message.getChatId(),"Сумма расстояний от места отправления до места доставки: "+ KmUtil.calculateSum(km) + " so'm"));
+
+                    getPayment(message);
                 }
 
                 case PAYMENT -> {
                     if (checkMoney(message)) {
-                        orderClientService.getPayment(message);
+
                     }
                 }
                 case GETTOWHERELOCATION -> {
@@ -136,15 +147,14 @@ public class TransportUslugaController {
 
             if (transportStep.getStep().equals(Step.GETTOWHERELOCATION)) {
                 orderClient.setToWhere(getCurrentLocation(message));
-                transportStep.setStep(null);
-                getPayment(message);
-
+//                getPayment(message);
+                transportService.orderCar(message);
+                transportStep.setStep(Step.GETPHONE);
             } else {
 
                 orderClient.setFromWhere(getCurrentLocation(message));
                 getToWhereLocation(message);
                 saveUser(message.getChatId()).setStep(Step.GETTOWHERELOCATION);
-
             }
         }
     }

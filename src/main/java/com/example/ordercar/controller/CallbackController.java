@@ -5,6 +5,7 @@ import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.service.CallBackService;
 import com.example.ordercar.driver.service.DriverService;
 import com.example.ordercar.service.MainService;
+import com.example.ordercar.service.OrderClientService;
 import com.example.ordercar.util.SendMsg;
 import com.example.ordercar.util.Step;
 import org.springframework.context.annotation.Lazy;
@@ -25,11 +26,13 @@ public class CallbackController {
 
     private final DriverService driverService;
 
+    private final OrderClientService clientService;
+
 
     @Lazy
     public CallbackController(MyTelegramBot myTelegramBot,
                               CallBackService callBackService,
-                              TransportUslugaController uslugaController, MainService mainService, MainController mainController, DriverService driverService) {
+                              TransportUslugaController uslugaController, MainService mainService, MainController mainController, DriverService driverService, OrderClientService clientService) {
         this.myTelegramBot = myTelegramBot;
 
         this.callBackService = callBackService;
@@ -38,6 +41,7 @@ public class CallbackController {
         this.mainService = mainService;
         this.mainController = mainController;
         this.driverService = driverService;
+        this.clientService = clientService;
     }
 
     public void handler(Update update) {
@@ -66,7 +70,7 @@ public class CallbackController {
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
             }
             case "payme" -> {
-                callBackService.getPayMe(message);
+                clientService.getPayment(message);
                 uslugaController.saveUser(message.getChatId()).setStep(Step.PAYMENT);
 
             }
