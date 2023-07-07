@@ -7,6 +7,6 @@ import lombok.Getter;
 @Getter
 public class CheckPerformTransactionResult {
     public boolean allow;
-    private DetailResult detailResult;
+    private DetailResult detail;
 
 }

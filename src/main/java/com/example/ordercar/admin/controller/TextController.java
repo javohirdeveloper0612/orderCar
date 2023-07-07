@@ -198,7 +198,7 @@ public class TextController {
     }
 
     public void getOrderDate(LocalDate date, Message message) {
-        Boolean exists = orderClientRepository.existsByOrderDate(date);
+        Boolean exists = orderClientRepository.existsByOrderDateAndStatus(date,Status.ACTIVE);
         if (exists) {
             myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
                     "*Извините, эта дата забронирована. Выберите другую дату!*"));

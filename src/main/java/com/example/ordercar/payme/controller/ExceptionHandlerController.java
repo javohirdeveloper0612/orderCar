@@ -54,9 +54,15 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     private ResponseEntity<?> handler(TransactionNotFoundException e) {
         return ResponseEntity.ok(new Error(new Exception(-31003, e.getMessage(), "transaction")));
     }
+
     @ExceptionHandler({TransactionInWaiting.class})
     private ResponseEntity<?> handler(TransactionInWaiting e) {
         return ResponseEntity.ok(new Error(new Exception(-31099, e.getMessage(), "transaction")));
+    }
+
+    @ExceptionHandler({OrderAlreadyPayed.class})
+    private ResponseEntity<?> handler(OrderAlreadyPayed e) {
+        return ResponseEntity.ok(new Error(new Exception(-31099, e.getMessage(), "order payed/canceled")));
     }
 
 

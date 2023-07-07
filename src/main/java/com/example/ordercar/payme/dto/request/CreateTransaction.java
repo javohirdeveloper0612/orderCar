@@ -12,6 +12,6 @@ import lombok.Setter;
 public class CreateTransaction {
     private String id;
     private long time;
-    private Integer amount;
+    private Long amount;
     private Account account;
 }

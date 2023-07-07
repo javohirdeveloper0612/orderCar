@@ -1,4 +1,5 @@
 package com.example.ordercar.controller;
+
 import com.example.ordercar.entity.LocationClient;
 import com.example.ordercar.entity.OrderClientEntity;
 import com.example.ordercar.entity.ProfileEntity;
@@ -16,25 +17,26 @@ import com.example.ordercar.util.ButtonName;
 import com.example.ordercar.util.InlineButton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class TransportUslugaController {
 
-    private final List<TelegramUsers> usersList = new ArrayList<>();
+    public static final List<TelegramUsers> usersList = new ArrayList<>();
     private final MainService mainService;
-    public OrderClientEntity orderClient = new OrderClientEntity();
     private final MainController mainController;
     private final TransportUslugaService transportService;
     final OrderClientService orderClientService;
     private final OrderClientRepository orderClientRepository;
     private final MyTelegramBot myTelegramBot;
     private final ProfileRepository profileRepository;
-
-
 
 
     @Autowired
@@ -72,7 +74,7 @@ public class TransportUslugaController {
 
                         case ButtonName.priceList -> transportService.priceData(message);
                         case ButtonName.orderCar -> {
-                            myTelegramBot.send(SendMsg.sendPhotoCarInfo(message.getChatId(),"Характеристики"));
+                            myTelegramBot.send(SendMsg.sendPhotoCarInfo(message.getChatId(), "Характеристики"));
                             transportService.guideOrderCar(message);
                             transportService.replyStart(message.getChatId());
 
@@ -107,7 +109,7 @@ public class TransportUslugaController {
                 }
                 case CHECKSMS -> {
                     if (checkSmsCode(message)) {
-                        orderClientService.getFullName(message);
+                        orderClientService.getFullName(message.getChatId());
                         transportStep.setStep(Step.GETFULLNAME);
                     } else {
                         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
@@ -115,27 +117,20 @@ public class TransportUslugaController {
                     }
                 }
                 case GETFULLNAME -> {
-                    orderClient.setFullName(message.getText());
-                    double km =  KmUtil.calculateDistance(orderClient.getFromWhere(),orderClient.getToWhere());
-                    myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),"Расстояние от начальной точки автомобиля до пункта назначения автомобиля: " + km + " km"));
-
-                    myTelegramBot.send(SendMsg.sendPhoto(message.getChatId(),"Сумма расстояний от места отправления до места доставки: "+ KmUtil.calculateSum(km) + " so'm"));
-
-                    getPayment(message);
-                }
-
-                case PAYMENT -> {
-                    if (checkMoney(message)) {
-
+                    Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueAndPhoneIsNotNullOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);
+                    if (optional.isEmpty()) {
+                        return;
                     }
-                }
-                case GETTOWHERELOCATION -> {
-                    getToWhereLocation(message);
+                    OrderClientEntity orderClient = optional.get();
+                    orderClient.setFullName(message.getText());
+                    orderClientRepository.save(orderClient);
+                    getPayment(message.getChatId(), orderClient.getId());
+//                    getCash(message.getChatId(), orderClient.getId());
                 }
 
-                case GETFROMWHERELOCATION -> {
-                    getFromWhereLocation(message);
-                }
+                case GETTOWHERELOCATION -> getToWhereLocation(message);
+
+                case GETFROMWHERELOCATION -> getFromWhereLocation(message);
 
             }
         } else if (message.hasContact()) {
@@ -146,45 +141,68 @@ public class TransportUslugaController {
         } else if (message.hasLocation()) {
 
             if (transportStep.getStep().equals(Step.GETTOWHERELOCATION)) {
-                orderClient.setToWhere(getCurrentLocation(message));
-//                getPayment(message);
-                transportService.orderCar(message);
-                transportStep.setStep(Step.GETPHONE);
-            } else {
+                Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);
+                if (optional.isEmpty()) {
+                    return;
+                }
+                OrderClientEntity orderClient = optional.get();
 
+                if (orderClient.getFromWhere() == null) {
+                    return;
+                }
+                orderClient.setToWhere(getCurrentLocation(message));
+                double km = KmUtil.calculateDistance(orderClient.getFromWhere(), orderClient.getToWhere());
+                long amount = KmUtil.calculateSum(km);
+//                orderClient.setAmount(amount);
+                orderClient.setAmount(100000L);
+                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Расстояние от начальной точки автомобиля до пункта назначения автомобиля: " + km + " km"));
+                myTelegramBot.send(SendMsg.sendPhoto(message.getChatId(), "Сумма расстояний от места отправления до места доставки: " + amount / 100 + "." + amount % 100 + " so'm"));
+
+                orderClientRepository.save(orderClient);
+//                getPayment(message, orderClient.getId());
+                transportService.orderCar(message.getChatId());
+//                transportStep.setStep(Step.PAYMENT);
+            } else {
+                Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);
+                if (optional.isEmpty()) {
+                    return;
+                }
+                OrderClientEntity orderClient = optional.get();
                 orderClient.setFromWhere(getCurrentLocation(message));
+                orderClientRepository.save(orderClient);
                 getToWhereLocation(message);
                 saveUser(message.getChatId()).setStep(Step.GETTOWHERELOCATION);
             }
         }
     }
 
-    private boolean checkMoney(Message message) {
 
-        String text = message.getText();
-        for (int i = 0; i < text.length(); i++) {
-            if (Character.isAlphabetic(text.charAt(i)) || text.length() < 4) {
-                myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                        "\uD83D\uDD22 *Введите сумму платежа минимум 1000: (UZS)*"));
-                return false;
-            }
-        }
-
-        return true;
-    }
+//    private boolean checkMoney(Message message) {
+//
+//        String text = message.getText();
+//        for (int i = 0; i < text.length(); i++) {
+//            if (Character.isAlphabetic(text.charAt(i)) || text.length() < 4) {
+//                myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
+//                        "\uD83D\uDD22 *Введите сумму платежа минимум 1000: (UZS)*"));
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//    }
 
     private void getToWhereLocation(Message message) {
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
                 "*Куда едет машина? Пожалуйста, поделитесь местоположением!*"));
     }
 
-    private void getPayment(Message message) {
+    private void getPayment(Long chatId, Long orderId) {
 
-        myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
+        myTelegramBot.send(SendMsg.sendMsg(chatId,
                 "*Пожалуйста, выберите удобную для вас платежную систему*",
                 InlineButton.keyboardMarkup(InlineButton.rowList(
-                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  PAYME (Автоплатеж)", "payme")),
-                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  НАЛИЧНЫЕ ", "naqd")),
+                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  PAYME (Автоплатеж)", "payme#" + orderId)),
+                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  НАЛИЧНЫЕ ", "naqd#" + orderId)),
                         InlineButton.row(InlineButton.button("⬅️ НАЗАД", "back"))
                 ))));
     }
@@ -201,20 +219,34 @@ public class TransportUslugaController {
     }
 
     boolean checkSmsCode(Message message) {
-        return message.getText().equals(orderClient.getSmsCode());
+        Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueAndPhoneIsNotNullOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);
+        if (optional.isEmpty()) {
+            return false;
+        }
+
+        return message.getText().equals(optional.get().getSmsCode());
     }
 
     public void getOrderDate(LocalDate localDate, Message message) {
-        Boolean exists = orderClientRepository.existsByOrderDate(localDate);
+        Boolean exists = orderClientRepository.existsByOrderDateAndStatus(localDate, Status.ACTIVE);
         if (exists) {
             myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
                     "*Извините, эта дата забронирована. Выберите другую дату!*"));
             transportService.replyStart(message.getChatId());
 
         } else {
+            Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);
+            if (optional.isPresent()) {
+                OrderClientEntity orderClient = optional.get();
+                orderClient.setVisible(false);
+                orderClientRepository.save(orderClient);
+            }
+            OrderClientEntity orderClient = new OrderClientEntity();
             getFromWhereLocation(message);
             saveUser(message.getChatId()).setStep(Step.GETFROMWHERELOCATION);
             orderClient.setOrderDate(localDate);
+            orderClient.setChatId(message.getChatId());
+            orderClientRepository.save(orderClient);
         }
     }
 
@@ -240,12 +272,22 @@ public class TransportUslugaController {
 
         String randomNumber = RandomUtil.getRandomNumber();
         String phone = message.getText();
+        Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);
+        if (optional.isEmpty()) {
+            return;
+        }
+        OrderClientEntity orderClient = optional.get();
         orderClient.setSmsCode(randomNumber);
         orderClient.setPhone(phone);
+        orderClientRepository.save(orderClient);
         SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(phone), randomNumber);
-        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
+        SendMessage sendMessage = SendMsg.sendMsgParse(message.getChatId(),
                 "*" + phone + "*" + "* Код подтверждения был отправлен на этот номер!*" +
-                        "*\nПожалуйста, введите проверочный код  ✅*"));
+                        "*\nПожалуйста, введите проверочный код  ✅*");
+        ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
+        replyKeyboardRemove.setRemoveKeyboard(true);
+        sendMessage.setReplyMarkup(replyKeyboardRemove);
+        myTelegramBot.send(sendMessage);
     }
 
 
@@ -253,26 +295,42 @@ public class TransportUslugaController {
 
         String randomNumber = RandomUtil.getRandomNumber();
         String phone = message.getContact().getPhoneNumber();
+
+        Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueAndPhoneIsNullOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);
+        if (optional.isEmpty()) {
+            return;
+        }
+        OrderClientEntity orderClient = optional.get();
+
         orderClient.setSmsCode(randomNumber);
         orderClient.setPhone(phone);
         orderClient.setChatId(message.getChatId());
+        orderClientRepository.save(orderClient);
         SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(phone), randomNumber);
-        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*" + phone + "*" + "*Код подтверждения был отправлен на этот номер! *" +
-                        "*\nПожалуйста, введите проверочный код  ✅*"));
+        SendMessage sendMessage = SendMsg.sendMsgParse(message.getChatId(),
+                "*" + phone + "*" + "* Код подтверждения был отправлен на этот номер!*" +
+                        "*\nПожалуйста, введите проверочный код  ✅*");
+        ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
+        replyKeyboardRemove.setRemoveKeyboard(true);
+        sendMessage.setReplyMarkup(replyKeyboardRemove);
+        myTelegramBot.send(sendMessage);
 
     }
 
-    public void getCash(Message message) {
-
-        myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Ваш заказ принят! Наши специалисты свяжутся с вами в ближайшее время*"));
-        orderClient.setPayment(Payment.NAQD);
+    public void acceptOrder(Long chatId, Long orderId) {
+        Optional<OrderClientEntity> optional = orderClientRepository.findById(orderId);
+        if (optional.isEmpty()) {
+            myTelegramBot.send(SendMsg.sendMsg(chatId,
+                    "Something went wrong"));
+        }
+        OrderClientEntity orderClient = optional.get();
         orderClient.setStatus(Status.ACTIVE);
-        saveUser(message.getChatId()).setStep(null);
-        OrderClientEntity save = orderClientRepository.save(orderClient);
-        orderClient = new OrderClientEntity();
-        sendOrder(save);
+
+        myTelegramBot.send(SendMsg.sendMsg(chatId,
+                "*Ваш заказ принят! Наши специалисты свяжутся с вами в ближайшее время*"));
+
+        orderClientRepository.save(orderClient);
+        sendOrder(orderClient);
     }
 
     public void sendOrder(OrderClientEntity save) {

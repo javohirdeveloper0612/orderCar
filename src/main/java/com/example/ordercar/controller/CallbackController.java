@@ -52,15 +52,15 @@ public class CallbackController {
         String[] parts = query.split("#");
         long locationId = 0;
         if (parts.length == 2) {
-           locationId = Long.parseLong(parts[1]);
+            locationId = Long.parseLong(parts[1]);
         }
 
         switch (parts[0]) {
             case "view_loc" -> myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), message.getMessageId()));
 
-            case "finish_order" -> driverService.finishOrder(message,locationId,message.getMessageId());
+            case "finish_order" -> driverService.finishOrder(message, locationId, message.getMessageId());
 
-            case "loc1", "loc2" -> driverService.getLocation(message, parts,message.getMessageId());
+            case "loc1", "loc2" -> driverService.getLocation(message, parts, message.getMessageId());
 
             case "accept_order" -> driverService.acceptOrder(message, locationId);
 
@@ -69,11 +69,7 @@ public class CallbackController {
                 mainService.mainMenu(message);
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
             }
-            case "payme" -> {
-                clientService.getPayment(message);
-                uslugaController.saveUser(message.getChatId()).setStep(Step.PAYMENT);
-
-            }
+            case "payme" -> clientService.getPayment(message, Long.valueOf(parts[1]));
             case "click" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 callBackService.getClick(message);
@@ -97,9 +93,7 @@ public class CallbackController {
             }
             case "naqd" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
-                uslugaController.getCash(message);
-                mainService.mainMenu(message);
-                mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
+                uslugaController.acceptOrder(message.getChatId(), Long.parseLong(parts[1]));
             }
 
         }

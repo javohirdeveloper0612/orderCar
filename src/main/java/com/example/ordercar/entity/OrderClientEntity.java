@@ -10,7 +10,8 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Entity(name = "order_client")
+@Entity
+@Table(name = "order_client")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -50,9 +51,12 @@ public class OrderClientEntity {
     private Payment payment;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.NOTACTIVE;
 
     @Column
     private Long driverId;
+
+    @Column(name = "is_visible")
+    private boolean isVisible = true;
 
 }

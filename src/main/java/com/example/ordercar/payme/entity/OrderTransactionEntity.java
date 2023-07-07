@@ -1,5 +1,6 @@
 package com.example.ordercar.payme.entity;
 
+import com.example.ordercar.entity.OrderClientEntity;
 import com.example.ordercar.payme.enums.OrderCancelReason;
 import com.example.ordercar.payme.enums.TransactionState;
 import jakarta.persistence.*;
@@ -34,5 +35,5 @@ public class OrderTransactionEntity {
     private TransactionState state;
 
     @OneToOne
-    private CustomOrder order;
+    private OrderClientEntity order;
 }

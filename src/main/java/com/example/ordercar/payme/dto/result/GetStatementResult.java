@@ -12,7 +12,7 @@ import lombok.*;
 public class GetStatementResult {
     private String id;
     private long time;
-    private Integer amount;
+    private long amount;
     private Account account;
     private long create_time;
     private long perform_time;

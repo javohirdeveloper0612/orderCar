@@ -1,17 +1,21 @@
 package com.example.ordercar.payme.service.impl;
 
+import com.example.ordercar.controller.TransportUslugaController;
+import com.example.ordercar.entity.OrderClientEntity;
+import com.example.ordercar.enums.Status;
 import com.example.ordercar.payme.dto.request.*;
 import com.example.ordercar.payme.dto.result.*;
-import com.example.ordercar.payme.entity.CustomOrder;
 import com.example.ordercar.payme.entity.OrderTransactionEntity;
 
 import com.example.ordercar.payme.enums.Method;
 import com.example.ordercar.payme.enums.TransactionState;
 import com.example.ordercar.payme.exp.*;
-import com.example.ordercar.payme.repository.OrderRepository;
 import com.example.ordercar.payme.repository.TransactionRepository;
 import com.example.ordercar.payme.service.IMerchantService;
+import com.example.ordercar.repository.OrderClientRepository;
+import com.example.ordercar.service.TransportUslugaService;
 import com.google.gson.Gson;
+import com.sun.jdi.connect.spi.TransportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,22 +31,27 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MerchantService implements IMerchantService {
     private static final Long time_expired = 43_200_000L;
-    private final OrderRepository orderRepository;
+    private final OrderClientRepository orderRepository;
     private final TransactionRepository transactionRepository;
-    private CustomOrder order = null;
+    private final TransportUslugaController transportUslugaController;
 
     @Override
     public CheckPerformTransactionResult checkPerformTransaction(CheckPerformTransaction checkPerformTransaction) {
-        Optional<CustomOrder> optional = orderRepository.findById(Long.valueOf(checkPerformTransaction.getAccount().getOrder_id()));
+        Optional<OrderClientEntity> optional = orderRepository.findById(Long.valueOf(checkPerformTransaction.getAccount().getOrder_id()));
         if (optional.isEmpty()) {
             throw new OrderNotFoundException("Order not found");
         }
-
-        if (!checkPerformTransaction.getAmount().equals(optional.get().getAmount())) {
+        OrderClientEntity orderClient = optional.get();
+        if (!checkPerformTransaction.getAmount().equals(orderClient.getAmount())) {
             throw new WrongAmountException("Wrong amount");
         }
-        order = optional.get();
-        return new CheckPerformTransactionResult(true, new DetailResult(0, List.of(new Item("10319999001000000", "Elektron raqamli imzoni yaratish va ro’yxatdan o’tkazish xizmati", order.getAmount(), 1, "1501336", 0))));
+
+        if (orderClient.getStatus().equals(Status.ACTIVE)) {
+            throw new OrderAlreadyPayed("invoice already paid/cancelled");
+        }
+        return new CheckPerformTransactionResult(true, new DetailResult(0, List.of(new Item("10107002001000000",
+                "Услуги по перевозке грузов автомобильным транспортом",
+                orderClient.getAmount(), 1, "1209885", 0))));
     }
 
     @Override
@@ -62,7 +71,7 @@ public class MerchantService implements IMerchantService {
                 newTransaction.setPaycomTime(createTransaction.getTime());
                 newTransaction.setCreateTime(new Date().getTime());
                 newTransaction.setState(TransactionState.STATE_IN_PROGRESS);
-                newTransaction.setOrder(order);
+                newTransaction.setOrder(orderRepository.findById(Long.parseLong(createTransaction.getAccount().getOrder_id())).get());
                 transactionRepository.save(newTransaction);
                 return new CreateTransactionResult((newTransaction.getCreateTime()), newTransaction.getId().toString(), newTransaction.getState().getCode());
             }
@@ -99,6 +108,11 @@ public class MerchantService implements IMerchantService {
             } else {
                 transaction.setState(TransactionState.STATE_DONE);
                 transaction.setPerformTime(new Date().getTime());
+                OrderClientEntity order = transaction.getOrder();
+                order.setStatus(Status.ACTIVE);
+                orderRepository.save(order);
+                transportUslugaController.acceptOrder(order.getChatId(), order.getId());
+
                 transactionRepository.save(transaction);
                 return new PerformTransactionResult(transaction.getId().toString(), transaction.getPerformTime(), transaction.getState().getCode());
             }
@@ -120,7 +134,7 @@ public class MerchantService implements IMerchantService {
         if (transaction.getState().equals(TransactionState.STATE_IN_PROGRESS)) {
             transaction.setState(TransactionState.STATE_CANCELED);
         } else if (transaction.getState().equals(TransactionState.STATE_DONE)) {
-            if (transaction.getOrder().getDelivered()) {
+            if (transaction.getOrder().getStatus().equals(Status.FINISHED) || transaction.getOrder().getStatus().equals(Status.ACTIVE)) {
                 throw new UnableCancelTransaction("Unable cancel transaction");
             } else {
                 transaction.setState(TransactionState.STATE_POST_CANCELED);

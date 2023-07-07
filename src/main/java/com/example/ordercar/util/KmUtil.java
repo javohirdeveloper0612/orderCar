@@ -25,17 +25,17 @@ public class KmUtil {
         return  roundedDistance;
     }
 
-    public static Double calculateSum(double distanceInKm){
+    public static long calculateSum(double distanceInKm){
 
-            double sum = 0;
+            long sum = 0;
             if (distanceInKm < 50) {
-                sum = 1250000;
+                sum = 1250000*100;
             } else if (distanceInKm >= 50 && distanceInKm <= 130) {
-                sum = distanceInKm * 25000;
+                sum = (long) (distanceInKm * 25000*100);
             } else if (distanceInKm > 130 && distanceInKm <= 200) {
-                sum = distanceInKm * 20000;
+                sum = (long) (distanceInKm * 20000*100);
             } else if (distanceInKm > 200) {
-                sum = distanceInKm * 15000;
+                sum = (long) (distanceInKm * 15000*100);
             }
             return sum;
 

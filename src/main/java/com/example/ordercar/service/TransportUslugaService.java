@@ -1,4 +1,5 @@
 package com.example.ordercar.service;
+
 import com.example.ordercar.mytelegram.MyTelegramBot;
 import com.example.ordercar.util.*;
 import com.example.ordercar.util.Button;
@@ -9,7 +10,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+
 import java.time.LocalDate;
+
+import static com.example.ordercar.controller.TransportUslugaController.usersList;
 
 @Service
 public class TransportUslugaService {
@@ -17,6 +21,7 @@ public class TransportUslugaService {
 
     private final MyTelegramBot myTelegramBot;
     private final CalendarUtil calendarUtil;
+
 
     @Lazy
     @Autowired
@@ -32,8 +37,11 @@ public class TransportUslugaService {
         );
     }
 
-    public void orderCar(Message message) {
-        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
+    public void orderCar(Long chatId) {
+        TelegramUsers user = saveUser(chatId);
+        user.setStep(Step.GETPHONE);
+
+        myTelegramBot.send(SendMsg.sendMsgParse(chatId,
                 "*Пожалуйста, введите свой номер телефона в форму ниже : " +
                         "\nНапример : +998901234567 ✅*",
                 ButtonUtil.getContact()));
@@ -64,7 +72,7 @@ public class TransportUslugaService {
 
     public void guideOrderCar(Message message) {
 
-        myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),"Инструкции по заказу  ❕❕❕\n" +
+        myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Инструкции по заказу  ❕❕❕\n" +
                 "\n" +
                 "\uD83D\uDD35 1 - Выберите день, в который хотите заказать автомобиль\n" +
                 "\uD83D\uDD35 2 - Введите точный адрес точки отправки груза используя функцию «Telegram \uD83D\uDCCD Location»\n" +
@@ -72,9 +80,9 @@ public class TransportUslugaService {
                 "\uD83D\uDD35 4 - Введите номер телефона и подтвердите через SMS\n" +
                 "\uD83D\uDD35 5 - Введите полное имя и фамилию\n" +
                 "\uD83D\uDD35 6 - Выберите удобный для вас вид оплаты  \n" +
-                "\uD83D\uDD35 7 - Оплатить указанную цену  \n"+
+                "\uD83D\uDD35 7 - Оплатить указанную цену  \n" +
                 "\uD83D\uDD35 Мы свяжемся с вами, как только ваш заказ будет успешно выполнен  \uD83E\uDD1D\n" +
-                "\n"+
+                "\n" +
                 "Осторожность  ❗️❗️❗️\n" +
                 "\n" +
                 "⛔️ Введите правильный номер телефона, там код подтверждения смс  \n" +
@@ -84,5 +92,18 @@ public class TransportUslugaService {
                 "\n" +
                 "-. Вы можете продолжить заказ  ✅⬇️"));
 
+    }
+
+    public TelegramUsers saveUser(Long chatId) {
+
+        for (TelegramUsers users : usersList) {
+            if (users.getChatId().equals(chatId)) {
+                return users;
+            }
+        }
+        var users = new TelegramUsers();
+        users.setChatId(chatId);
+        usersList.add(users);
+        return users;
     }
 }

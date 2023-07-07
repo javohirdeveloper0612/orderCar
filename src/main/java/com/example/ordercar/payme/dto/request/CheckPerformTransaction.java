@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckPerformTransaction {
-    private Integer amount;
+    private Long amount;
     private Account account;
 }

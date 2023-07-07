@@ -13,8 +13,11 @@ public class PaymentUtil {
     @Value("${paycom.merchant.id}")
     private String merchantId;
 
-    public String generatePaymentUrl(Integer orderId, Integer amount) {
-        String str = String.format("m=%s;ac.order_id=%s;ac.key=2;a=%s", merchantId, orderId, amount);
+    @Value("${bot.url}")
+    private String botUrl;
+
+    public String generatePaymentUrl(Long orderId, long amount) {
+        String str = String.format("m=%s;ac.order_id=%s;ac.key=2;a=%s;c=%s", merchantId, orderId, amount, botUrl);
         String s = Base64.getEncoder().encodeToString(str.getBytes());
         return checkoutUrl + s;
     }
