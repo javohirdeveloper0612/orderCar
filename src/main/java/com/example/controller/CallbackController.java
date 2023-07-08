@@ -35,10 +35,8 @@ public class CallbackController {
                               CallBackService callBackService,
                               TransportUslugaController uslugaController, MainService mainService, MainController mainController, DriverService driverService, OrderClientService clientService) {
         this.myTelegramBot = myTelegramBot;
-
         this.callBackService = callBackService;
         this.uslugaController = uslugaController;
-
         this.mainService = mainService;
         this.mainController = mainController;
         this.driverService = driverService;
@@ -95,6 +93,7 @@ public class CallbackController {
             case "naqd" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 uslugaController.acceptOrder(message.getChatId(), Long.parseLong(parts[1]), Payment.NAQD);
+
             }
 
         }

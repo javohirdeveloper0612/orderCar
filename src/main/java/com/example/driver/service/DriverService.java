@@ -34,7 +34,7 @@ public class DriverService {
     public void menu(Message message) {
 
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
-                "*Salom ! Kerakli menyuni tanlang *",
+                "*Salom Kerakli menyuni tanlang  ⬇️*",
                 Button.markup(
                         Button.rowList(
                                 Button.row(Button.button(ButtonName.activeOrder),

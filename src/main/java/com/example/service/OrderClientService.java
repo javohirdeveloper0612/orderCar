@@ -1,6 +1,4 @@
 package com.example.service;
-
-import com.example.enums.Payment;
 import com.example.enums.Status;
 import com.example.mytelegram.MyTelegramBot;
 import com.example.payme.util.PaymentUtil;
@@ -25,12 +23,6 @@ public class OrderClientService {
         this.myTelegramBot = myTelegramBot;
         this.paymentUtil = paymentUtil;
         this.orderClientRepository = orderClientRepository;
-    }
-
-    public void getFullName(Long chatId) {
-        myTelegramBot.send(SendMsg.sendMsgParse(chatId,
-                "*Пожалуйста, введите ваше полное имя \n" +
-                        "Например: Коржабов Шахзод* ✅"));
     }
 
 
