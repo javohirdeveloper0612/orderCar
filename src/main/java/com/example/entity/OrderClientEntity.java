@@ -41,8 +41,6 @@ public class OrderClientEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     private LocationClient toWhere;
-    @Column
-    private double onlineMoney;
 
     @Column
     private LocalDate orderDate;

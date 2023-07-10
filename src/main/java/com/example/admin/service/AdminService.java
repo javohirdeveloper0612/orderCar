@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -28,7 +29,7 @@ public class AdminService {
     private final MyTelegramBot myTelegramBot;
     private final OrderClientRepository orderClientRepository;
     private final ProfileRepository profileRepository;
-
+@Lazy
     public AdminService(MyTelegramBot myTelegramBot,
                         OrderClientRepository orderClientRepository,
                         ProfileRepository profileRepository) {
@@ -148,7 +149,7 @@ public class AdminService {
 
 
     public void onlineProfit(Message message) {
-        var payment = orderClientRepository.findAllByPayment(Payment.PLASTIK);
+        var payment = orderClientRepository.findAllByPayment(Payment.КАРТА);
         if (payment.isEmpty()) {
             myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
                     "*Нет онлайн-списка ввода*"));
@@ -171,7 +172,7 @@ public class AdminService {
 
                 paymentData.put(entity.getId(), new Object[]{entity.getId().toString(), entity.getFullName(),
                         entity.getPhone(), entity.getOrderDate(), entity.getStatus(),
-                        entity.getPayment().toString(), entity.getOnlineMoney()});
+                        entity.getPayment().toString(), entity.getAmount()});
 
                 Set<Long> keyid = paymentData.keySet();
                 int rowid = 0;

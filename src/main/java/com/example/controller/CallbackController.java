@@ -4,6 +4,7 @@ package com.example.controller;
 import com.example.driver.service.DriverService;
 import com.example.enums.Payment;
 import com.example.mytelegram.MyTelegramBot;
+import com.example.service.TransportUslugaService;
 import com.example.util.SendMsg;
 import com.example.util.Step;
 import com.example.service.CallBackService;
@@ -25,6 +26,8 @@ public class CallbackController {
     private final MainService mainService;
     private final MainController mainController;
 
+    private final TransportUslugaService transportService;
+
     private final DriverService driverService;
 
     private final OrderClientService clientService;
@@ -33,12 +36,13 @@ public class CallbackController {
     @Lazy
     public CallbackController(MyTelegramBot myTelegramBot,
                               CallBackService callBackService,
-                              TransportUslugaController uslugaController, MainService mainService, MainController mainController, DriverService driverService, OrderClientService clientService) {
+                              TransportUslugaController uslugaController, MainService mainService, MainController mainController, TransportUslugaService transportService, DriverService driverService, OrderClientService clientService) {
         this.myTelegramBot = myTelegramBot;
         this.callBackService = callBackService;
         this.uslugaController = uslugaController;
         this.mainService = mainService;
         this.mainController = mainController;
+        this.transportService = transportService;
         this.driverService = driverService;
         this.clientService = clientService;
     }
@@ -65,35 +69,45 @@ public class CallbackController {
 
             case "back" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
-                mainService.mainMenu(message);
+                mainService.mainMenu(message.getChatId());
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
             }
             case "payme" -> clientService.getPayment(message, Long.valueOf(parts[1]));
             case "click" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 callBackService.getClick(message);
-                mainService.mainMenu(message);
+                mainService.mainMenu(message.getChatId());
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
 
             }
             case "humo" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 callBackService.getHumo(message);
-                mainService.mainMenu(message);
+                mainService.mainMenu(message.getChatId());
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
 
             }
             case "uzum" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
                 callBackService.getUzum(message);
-                mainService.mainMenu(message);
+                mainService.mainMenu(message.getChatId());
                 mainController.saveUser(message.getChatId()).setStep(Step.MAIN);
 
             }
             case "naqd" -> {
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), message.getMessageId()));
-                uslugaController.acceptOrder(message.getChatId(), Long.parseLong(parts[1]), Payment.NAQD);
+                uslugaController.acceptOrder(message.getChatId(), Long.parseLong(parts[1]), Payment.НАЛИЧНЫЕ);
 
+            }
+
+            case "shartnoma" -> {
+                uslugaController.acceptOrder(message.getChatId(),Long.parseLong(parts[1]),Payment.СОГЛАШЕНИЕ);
+            }
+            case "continue" ->{
+
+                myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), Integer.valueOf(parts[1])));
+                myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), Integer.valueOf(parts[1]) + 1));
+                transportService.replyStart(message.getChatId());
             }
 
         }

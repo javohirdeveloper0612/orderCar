@@ -18,8 +18,8 @@ public class MainService {
         this.myTelegramBot = myTelegramBot;
     }
 
-    public void mainMenu(Message message) {
-        myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
+    public void mainMenu(Long chatId) {
+        myTelegramBot.send(SendMsg.sendMsgParse(chatId,
                 "*Здравствуйте ! Выберите необходимое меню *",
                 Button.markup(
                         Button.rowList(

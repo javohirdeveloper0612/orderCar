@@ -153,7 +153,7 @@ public class TextController {
 
             if (step.getStep().equals(Step.GETTOWHERELOCATION)) {
                 client.setToWhere(getCurrentLocation(message));
-                client.setPayment(Payment.NAQD);
+                client.setPayment(Payment.НАЛИЧНЫЕ);
                 client.setStatus(Status.ACTIVE);
                 orderClientRepository.save(client);
                 sendOrder();
@@ -233,11 +233,10 @@ public class TextController {
         myTelegramBot.send(SendMsg.sendMsg(entity.getChatId(),
                 "        *>>>>>>>>>>>Buyurtma<<<<<<<<<<<* \n" +
                         "\n*Buyurtma ID : * " + client.getId() +
-                        "" +
-                        "\n*ISM VA FAMILIYA : * " + client.getFullName() + "" +
-                        "\n*TELEFON RAQAM : * " + client.getPhone() + "" +
-                        "\n*Buyurtma sanasi : * " + client.getOrderDate() + "" +
-                        "\n*Status :* " + client.getStatus() + "" +
+                        "\n*ISM VA FAMILIYA : * " + client.getFullName() +
+                        "\n*TELEFON RAQAM : * " + client.getPhone() +
+                        "\n*Buyurtma sanasi : * " + client.getOrderDate() +
+                        "\n*Status :* " + client.getStatus() +
                         "\n*To'lov turi : * " + client.getPayment(),
                 InlineButton.keyboardMarkup(InlineButton.rowList(
                         InlineButton.row(InlineButton.button("Прием заказа ✅", "accept_order#" + client.getId()))))));

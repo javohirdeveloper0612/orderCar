@@ -70,17 +70,15 @@ public class TransportUslugaController {
 
                         case ButtonName.priceList -> transportService.priceData(message);
                         case ButtonName.orderCar -> {
-                            myTelegramBot.send(SendMsg.sendPhotoCarInfo(message.getChatId(), "Характеристики  ✅"));
-                            transportService.guideOrderCar(message);
-                            transportService.replyStart(message.getChatId());
-
+                          Integer messageId = myTelegramBot.send(SendMsg.sendPhotoCarInfo(message.getChatId(), "Характеристики  ✅")).getMessageId();
+                            transportService.guideOrderCar(message,messageId);
                         }
                         case ButtonName.document -> {
                             transportService.documentData(message);
                             transportStep.setStep(Step.DOCUMENT);
                         }
                         case ButtonName.backMainMenu -> {
-                            mainService.mainMenu(message);
+                            mainService.mainMenu(message.getChatId());
                             mainStep.setStep(Step.MAIN);
                         }
                     }
@@ -122,7 +120,6 @@ public class TransportUslugaController {
                     orderClient.setFullName(message.getText());
                     orderClientRepository.save(orderClient);
                     transportService.getPayment(message.getChatId(), orderClient.getId());
-//                    getCash(message.getChatId(), orderClient.getId());
                 }
 
                 case GETTOWHERELOCATION -> transportService.getToWhereLocation(message);
@@ -154,9 +151,7 @@ public class TransportUslugaController {
                 myTelegramBot.send(SendMsg.sendPhoto(message.getChatId(), "Сумма расстояний от места отправления до места доставки: " + amount / 100 + "." + amount % 100 + " so'm"));
 
                 orderClientRepository.save(orderClient);
-//                getPayment(message, orderClient.getId());
                 transportService.orderCar(message.getChatId());
-//                transportStep.setStep(Step.PAYMENT);
             } else {
                 Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);
                 if (optional.isEmpty()) {
@@ -267,6 +262,8 @@ public class TransportUslugaController {
                 "*Ваш заказ принят, наши специалисты свяжутся с вами в ближайшее время  ✅*"));
 
         orderClientRepository.save(orderClient);
+
+        mainService.mainMenu(chatId);
         sendOrder(orderClient);
     }
 

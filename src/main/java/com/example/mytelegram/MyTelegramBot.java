@@ -58,6 +58,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
+
         if (update.hasMyChatMember()) {
             ChatMember newChatMember = update.getMyChatMember().getNewChatMember();
             String status = newChatMember.getStatus();
@@ -133,9 +134,9 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             throw new RuntimeException(e);
         }
     }
-    public void send(SendPhoto message) {
+    public Message send(SendPhoto message) {
         try {
-            execute(message);
+         return  execute(message);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
@@ -165,9 +166,9 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    public void send(DeleteMessage deleteMessage) {
+    public Boolean send(DeleteMessage deleteMessage) {
         try {
-            execute(deleteMessage);
+         return  execute(deleteMessage);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }

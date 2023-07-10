@@ -109,7 +109,7 @@ public class MerchantService implements IMerchantService {
                 OrderClientEntity order = transaction.getOrder();
                 order.setStatus(Status.ACTIVE);
                 orderRepository.save(order);
-                transportUslugaController.acceptOrder(order.getChatId(), order.getId(), Payment.PLASTIK);
+                transportUslugaController.acceptOrder(order.getChatId(), order.getId(), Payment.КАРТА);
 
                 transactionRepository.save(transaction);
                 return new PerformTransactionResult(transaction.getId().toString(), transaction.getPerformTime(), transaction.getState().getCode());
@@ -124,6 +124,8 @@ public class MerchantService implements IMerchantService {
     @Override
     public CancelTransactionResult cancelTransaction(CancelTransaction cancelTransaction) {
         Optional<OrderTransactionEntity> optional = transactionRepository.findByPaycomId(cancelTransaction.getId());
+
+
 
         if (optional.isEmpty()) {
             throw new TransactionNotFoundException("Transaction not found");
