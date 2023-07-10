@@ -85,7 +85,7 @@ public class TransportUslugaService {
         );
     }
 
-    public void guideOrderCar(Message message) {
+    public void guideOrderCar(Message message,Integer messageId) {
 
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Инструкции по заказу  ❕❕❕\n" +
                 "\n" +
@@ -105,7 +105,10 @@ public class TransportUslugaService {
                 "⛔️ Дата, выбранная вами в календаре, не изменится. Будьте внимательны при выборе даты  \n" +
                 "⛔️ Пожалуйста, будьте внимательны при заказе  \uD83D\uDCAF\n" +
                 "\n" +
-                "-. Вы можете продолжить заказ  ✅⬇️"));
+                " Вы можете продолжить заказ  ✅⬇️  " +
+                "Если вы ознакомились с инструкцией, нажмите <следующую> кнопку!",InlineButton.keyboardMarkup(
+                        InlineButton.rowList(InlineButton.row(InlineButton.button("следующую ➡\uFE0F","continue#" +messageId))
+                        ))));
 
     }
 
@@ -184,6 +187,7 @@ public class TransportUslugaService {
                 InlineButton.keyboardMarkup(InlineButton.rowList(
                         InlineButton.row(InlineButton.button("\uD83D\uDFE2  PAYME (Автоплатеж)", "payme#" + orderId)),
                         InlineButton.row(InlineButton.button("\uD83D\uDFE2  НАЛИЧНЫЕ ", "naqd#" + orderId)),
+                        InlineButton.row(InlineButton.button("\uD83D\uDFE2  СОГЛАШЕНИЕ ", "shartnoma#" + orderId)),
                         InlineButton.row(InlineButton.button("⬅️ НАЗАД", "back"))
                 ))));
     }

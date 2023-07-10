@@ -1,4 +1,5 @@
 package com.example.controller;
+
 import com.example.util.ButtonName;
 import com.example.util.Step;
 import com.example.util.TelegramUsers;
@@ -30,7 +31,7 @@ public class MainController {
             var text = message.getText();
             var telegramUsers = saveUser(message.getChatId());
             if (text.equals("/start")) {
-                mainService.mainMenu(message);
+                mainService.mainMenu(message.getChatId());
                 telegramUsers.setStep(Step.MAIN);
                 transportController.saveUser(message.getChatId()).setStep(null);
                 return;
