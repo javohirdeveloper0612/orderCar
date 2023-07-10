@@ -17,6 +17,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderClientEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,8 +42,6 @@ public class OrderClientEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     private LocationClient toWhere;
-    @Column
-    private double onlineMoney;
 
     @Column
     private LocalDate orderDate;

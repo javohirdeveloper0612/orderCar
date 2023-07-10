@@ -54,6 +54,7 @@ public class TransportUslugaController {
 
 
     public void handler(Message message) {
+
         var transportStep = saveUser(message.getChatId());
         var mainStep = mainController.saveUser(message.getChatId());
 
@@ -95,8 +96,6 @@ public class TransportUslugaController {
                         case ButtonName.dataDriver -> mainService.dataVoditel(message);
                     }
                 }
-
-
                 case GETPHONE -> {
 
                     if (transportService.checkPhone(message)) {
@@ -114,21 +113,25 @@ public class TransportUslugaController {
                     }
                 }
                 case GETFULLNAME -> {
+
                     Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueAndPhoneIsNotNullOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);
+
                     if (optional.isEmpty()) {
                         return;
                     }
+
                     OrderClientEntity orderClient = optional.get();
                     orderClient.setFullName(message.getText());
                     orderClientRepository.save(orderClient);
                     transportService.getPayment(message.getChatId(), orderClient.getId());
-//                    getCash(message.getChatId(), orderClient.getId());
+
                 }
 
                 case GETTOWHERELOCATION -> transportService.getToWhereLocation(message);
                 case GETFROMWHERELOCATION -> transportService.getFromWhereLocation(message);
 
             }
+
         } else if (message.hasContact()) {
 
             transportService.sendContact(message);
@@ -137,6 +140,7 @@ public class TransportUslugaController {
         } else if (message.hasLocation()) {
 
             if (transportStep.getStep().equals(Step.GETTOWHERELOCATION)) {
+
                 Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);
                 if (optional.isEmpty()) {
                     return;
@@ -150,8 +154,10 @@ public class TransportUslugaController {
                 double km = KmUtil.calculateDistance(orderClient.getFromWhere(), orderClient.getToWhere());
                 long amount = KmUtil.calculateSum(km);
                 orderClient.setAmount(amount);
-                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(), "Расстояние от начальной точки автомобиля до пункта назначения автомобиля: " + km + " km"));
-                myTelegramBot.send(SendMsg.sendPhoto(message.getChatId(), "Сумма расстояний от места отправления до места доставки: " + amount / 100 + "." + amount % 100 + " so'm"));
+                myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
+                        "Расстояние от начальной точки автомобиля до пункта назначения автомобиля: " + km + " km"));
+                myTelegramBot.send(SendMsg.sendPhoto(message.getChatId(),
+                        "Сумма расстояний от места отправления до места доставки: " + amount / 100 + "." + amount % 100 + " so'm"));
 
                 orderClientRepository.save(orderClient);
 //                getPayment(message, orderClient.getId());
@@ -193,6 +199,7 @@ public class TransportUslugaController {
     }
 
     public void getOrderDate(LocalDate localDate, Message message) {
+
         Boolean exists = orderClientRepository.existsByOrderDateAndStatus(localDate, Status.ACTIVE);
         if (exists) {
             myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
@@ -200,12 +207,17 @@ public class TransportUslugaController {
             transportService.replyStart(message.getChatId());
 
         } else {
-            Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);
+
+            Optional<OrderClientEntity> optional =
+                    orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueOrderByOrderDateDesc
+                            (message.getChatId(), Status.NOTACTIVE);
+
             if (optional.isPresent()) {
                 OrderClientEntity orderClient = optional.get();
                 orderClient.setVisible(false);
                 orderClientRepository.save(orderClient);
             }
+
             OrderClientEntity orderClient = new OrderClientEntity();
             transportService.getFromWhereLocation(message);
             saveUser(message.getChatId()).setStep(Step.GETFROMWHERELOCATION);
@@ -236,6 +248,7 @@ public class TransportUslugaController {
         if (optional.isEmpty()) {
             return;
         }
+
         OrderClientEntity orderClient = optional.get();
         orderClient.setSmsCode(randomNumber);
         orderClient.setPhone(phone);
@@ -293,7 +306,8 @@ public class TransportUslugaController {
                         "\n*Статус :* " + orderClient.getStatus() + "" +
                         "\n*Тип оплаты : * " + orderClient.getPayment(),
                 InlineButton.keyboardMarkup(InlineButton.rowList(
-                        InlineButton.row(InlineButton.button("Прием заказа ✅", "accept_order#" + orderClient.getId()))))));
+                        InlineButton.row(InlineButton.button("Прием заказа ✅",
+                                "accept_order#" + orderClient.getId()))))));
     }
 
 

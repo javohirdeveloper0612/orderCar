@@ -1,4 +1,5 @@
 package com.example.mytelegram;
+
 import com.example.driver.controller.DriverController;
 import com.example.repository.ProfileRepository;
 import com.example.admin.controller.AdminController;
@@ -24,6 +25,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +45,10 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
     @Lazy
     public MyTelegramBot(BotConfig botConfig, MainController mainController,
-                         CallbackController callbackController, AdminController adminController, ProfileService profileService, AuthController authController, DriverController driverController, ProfileRepository profileRepository) {
+                         CallbackController callbackController, AdminController adminController,
+                         ProfileService profileService, AuthController authController,
+                         DriverController driverController, ProfileRepository profileRepository) {
+
         this.botConfig = botConfig;
         this.mainController = mainController;
         this.callbackController = callbackController;
@@ -52,6 +57,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         this.authController = authController;
         this.driverController = driverController;
         this.profileRepository = profileRepository;
+
     }
 
 
@@ -82,10 +88,10 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 return;
             }
 
-          if(message.getChatId() == 5723825009l || message.getChatId() == 60425361){
-               adminController.handle(update);
+            if (message.getChatId() == 5723825009L || message.getChatId() == 5530157790L || message.getChatId() == 60425361L) {
+                adminController.handle(update);
                 return;
-           }
+            }
 
             if (message.hasText() && message.getText().equals("*7777#")) {
                 authController.handle(message);
@@ -101,16 +107,23 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             if (message.hasContact() && users.getStep().equals(Step.REGISTER)) {
                 authController.handle(message);
             }
+
             mainController.handler(message);
 
         } else if (update.hasCallbackQuery()) {
 
             Message message = update.getCallbackQuery().getMessage();
 
-            if (message.getChatId() == 1030035146L) {
+            //-- Bu joyda ADMIN Panelga Callback ga tekshiriladi
+
+            if (message.getChatId() == 5530157790L) {
+
                 adminController.handle(update);
+
             } else {
+
                 callbackController.handler(update);
+
             }
 
         }
@@ -133,6 +146,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             throw new RuntimeException(e);
         }
     }
+
     public void send(SendPhoto message) {
         try {
             execute(message);

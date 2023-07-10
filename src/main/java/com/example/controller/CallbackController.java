@@ -24,16 +24,18 @@ public class CallbackController {
     private final TransportUslugaController uslugaController;
     private final MainService mainService;
     private final MainController mainController;
-
     private final DriverService driverService;
-
     private final OrderClientService clientService;
 
 
     @Lazy
     public CallbackController(MyTelegramBot myTelegramBot,
                               CallBackService callBackService,
-                              TransportUslugaController uslugaController, MainService mainService, MainController mainController, DriverService driverService, OrderClientService clientService) {
+                              TransportUslugaController uslugaController,
+                              MainService mainService,
+                              MainController mainController,
+                              DriverService driverService,
+                              OrderClientService clientService) {
         this.myTelegramBot = myTelegramBot;
         this.callBackService = callBackService;
         this.uslugaController = uslugaController;
@@ -50,11 +52,14 @@ public class CallbackController {
 
         String[] parts = query.split("#");
         long locationId = 0;
+
+
         if (parts.length == 2) {
             locationId = Long.parseLong(parts[1]);
         }
 
         switch (parts[0]) {
+
             case "view_loc" -> myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), message.getMessageId()));
 
             case "finish_order" -> driverService.finishOrder(message, locationId, message.getMessageId());
@@ -95,7 +100,6 @@ public class CallbackController {
                 uslugaController.acceptOrder(message.getChatId(), Long.parseLong(parts[1]), Payment.NAQD);
 
             }
-
         }
 
         String[] arr = query.split("/");
