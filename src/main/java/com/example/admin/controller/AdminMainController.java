@@ -96,7 +96,8 @@ public class AdminMainController {
 
                     }
                     case ButtonNameAdmin.updateDayOrder -> {
-                        updateDayService.replyStartUpdateOrder(message.getChatId());
+                        updateDayService.updateOrderList(message);
+                        updateDayService.updateOrderId(message);
                     }
                     case ButtonNameAdmin.setting -> {
                         mainServiceAdmin.setting(message);
@@ -205,7 +206,7 @@ public class AdminMainController {
                 }
             }
         }
-        
+
 
         if (step.getStep().equals(Step.DELETEORDERLIST)) {
 
