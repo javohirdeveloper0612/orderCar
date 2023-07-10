@@ -57,7 +57,9 @@ public class TransportUslugaService {
                 "\n" +
                 "- Пожалуйста, выберите дату, которую вы хотите заказать  ⬇️*");
         sendMessage.setParseMode("Markdown");
-        sendMessage.setReplyMarkup(calendarUtil.makeYearKeyBoard(LocalDate.now().getYear(), LocalDate.now().getMonthValue()));
+        sendMessage.setReplyMarkup(
+                calendarUtil.makeYearKeyBoard(
+                        LocalDate.now().getYear(), LocalDate.now().getMonthValue()));
         myTelegramBot.send(sendMessage);
     }
 
@@ -164,6 +166,7 @@ public class TransportUslugaService {
         orderClientRepository.save(orderClient);
         SmsServiceUtil.sendSmsCode(SmsServiceUtil.removePlusSign(phone), randomNumber);
         SendMessage sendMessage = SendMsg.sendMsgParse(message.getChatId(),
+
                 "*- код  ⬇️\n" +
                         "\n" +
                         "➡️ +" + phone + "*" + "* на этот номер отправлен код подтверждения  ✅*" +
