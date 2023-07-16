@@ -28,7 +28,8 @@ public class MainService {
                                         Button.button(ButtonName.metallprokat)),
                                 Button.row(Button.button(ButtonName.location),
                                         Button.button(ButtonName.contact)),
-                                Button.row(Button.button(ButtonName.setting))
+                                Button.row(Button.button(ButtonName.setting),
+                                        Button.button(ButtonName.botinstruction))
                         ))));
     }
 
@@ -53,11 +54,6 @@ public class MainService {
                 "*Эта функция будет доступна в ближайшее время *"));
     }
 
-    public void help(Message message) {
-        myTelegramBot.send(
-                SendMsg.sendMsgParse(message.getChatId(),
-                        "*Эта функция скоро появится *"));
-    }
 
     public void dataCar(Message message) {
         myTelegramBot.send(

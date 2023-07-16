@@ -90,14 +90,11 @@ public class AdminMainController {
                         mainServiceAdmin.notActiveOrder(message);
                     }
                     case ButtonNameAdmin.deleteOrder -> {
-
                         deleteOrderService.deleteOrderList(message);
                         step.setStep(Step.DELETEORDERLIST);
-
                     }
                     case ButtonNameAdmin.updateDayOrder -> {
-                        updateDayService.updateOrderList(message);
-                        updateDayService.updateOrderId(message);
+                      // Buyurtma sanasini o'zgartirish
                     }
                     case ButtonNameAdmin.setting -> {
                         mainServiceAdmin.setting(message);
@@ -131,7 +128,7 @@ public class AdminMainController {
 
             if (step.getStep().equals(Step.SAVEORDERPHONE)) {
 
-                client.setPayment(Payment.NAQD);
+                client.setPayment(Payment.НАЛИЧНЫЕ);
                 client.setStatus(Status.ACTIVE);
                 orderClientRepository.save(client);
                 sendOrder();

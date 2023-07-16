@@ -1,5 +1,4 @@
 package com.example.util;
-
 import com.example.entity.LocationClient;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
@@ -10,11 +9,12 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-
 import java.io.File;
 
 
 public class SendMsg {
+
+
     public static SendMessage sendMsg(Long id, String text) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(id);
@@ -116,6 +116,17 @@ public class SendMsg {
         sendLocation.setLongitude(69.365975);
         sendLocation.setReplyToMessageId(messageId);
         return sendLocation;
+
+    }
+
+    public static SendLocation sendLocationCommand(Long chatId, Integer messageId) {
+        SendLocation sendLocation = new SendLocation();
+        sendLocation.setChatId(chatId);
+        sendLocation.setLatitude(41.37607);
+        sendLocation.setLongitude(69.365975);
+        sendLocation.setReplyToMessageId(messageId);
+        return sendLocation;
+
     }
 
     public static SendLocation sendLocation(LocationClient location) {

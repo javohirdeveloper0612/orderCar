@@ -1,6 +1,4 @@
 package com.example.controller;
-
-
 import com.example.driver.service.DriverService;
 import com.example.enums.Payment;
 import com.example.mytelegram.MyTelegramBot;
@@ -25,22 +23,12 @@ public class CallbackController {
     private final TransportUslugaController uslugaController;
     private final MainService mainService;
     private final MainController mainController;
-
     private final TransportUslugaService transportService;
-
     private final DriverService driverService;
     private final OrderClientService clientService;
 
-
     @Lazy
-    public CallbackController(MyTelegramBot myTelegramBot,
-                              CallBackService callBackService,
-                              TransportUslugaController uslugaController, MainService mainService, MainController mainController, TransportUslugaService transportService, DriverService driverService, OrderClientService clientService) {
-                              TransportUslugaController uslugaController,
-                              MainService mainService,
-                              MainController mainController,
-                              DriverService driverService,
-                              OrderClientService clientService) {
+    public CallbackController(MyTelegramBot myTelegramBot, CallBackService callBackService, TransportUslugaController uslugaController, MainService mainService, MainController mainController, TransportUslugaService transportService, DriverService driverService, OrderClientService clientService) {
         this.myTelegramBot = myTelegramBot;
         this.callBackService = callBackService;
         this.uslugaController = uslugaController;
@@ -50,6 +38,7 @@ public class CallbackController {
         this.driverService = driverService;
         this.clientService = clientService;
     }
+
 
     public void handler(Update update) {
 
@@ -67,6 +56,7 @@ public class CallbackController {
         switch (parts[0]) {
 
             case "view_loc" -> myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), message.getMessageId()));
+            case "view_loc_command" -> myTelegramBot.send(SendMsg.sendLocation(message.getChatId(), message.getMessageId()));
 
             case "finish_order" -> driverService.finishOrder(message, locationId, message.getMessageId());
 
@@ -108,9 +98,9 @@ public class CallbackController {
             }
 
             case "shartnoma" -> {
-                uslugaController.acceptOrder(message.getChatId(),Long.parseLong(parts[1]),Payment.СОГЛАШЕНИЕ);
+                uslugaController.acceptOrder(message.getChatId(), Long.parseLong(parts[1]), Payment.СОГЛАШЕНИЕ);
             }
-            case "continue" ->{
+            case "continue" -> {
 
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), Integer.valueOf(parts[1])));
                 myTelegramBot.send(SendMsg.deleteMessage(message.getChatId(), Integer.valueOf(parts[1]) + 1));
@@ -130,7 +120,5 @@ public class CallbackController {
             uslugaController.getOrderDate(date, message);
         }
     }
-
-
 }
 

@@ -1,5 +1,4 @@
 package com.example.mytelegram;
-
 import com.example.driver.controller.DriverController;
 import com.example.repository.ProfileRepository;
 import com.example.admin.controller.AdminController;
@@ -25,7 +24,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,20 +64,26 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
 
         if (update.hasMyChatMember()) {
+
             ChatMember newChatMember = update.getMyChatMember().getNewChatMember();
             String status = newChatMember.getStatus();
             Long id = update.getMyChatMember().getFrom().getId();
 
             if (status.equals("kicked")) {
+
                 profileRepository.changeVisibleByUserid(id, Status.BLOCK);
+
             } else if (status.equals("member")) {
+
                 profileRepository.changeVisibleByUserid(id, Status.ACTIVE);
                 send(SendMsg.sendMsg(id, "Рад, что бот снова заработал !"));
+
             }
             return;
         }
 
         if (update.hasMessage()) {
+
             Message message = update.getMessage();
             TelegramUsers users = saveUser(message.getChatId());
 
@@ -89,7 +93,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 return;
             }
 
-            if (message.getChatId() == 5723825009L || message.getChatId() == 5530157790L || message.getChatId() == 60425361L) {
+            if (message.getChatId() == 60425361L) {
                 adminController.handle(update);
                 return;
             }
@@ -115,9 +119,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
             Message message = update.getCallbackQuery().getMessage();
 
-            //-- Bu joyda ADMIN Panelga Callback ga tekshiriladi
-
-            if (message.getChatId() == 5530157790L) {
+            if (message.getChatId() == 5530157798L) {
 
                 adminController.handle(update);
 
