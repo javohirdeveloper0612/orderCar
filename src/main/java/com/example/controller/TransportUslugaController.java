@@ -1,4 +1,5 @@
 package com.example.controller;
+
 import com.example.entity.LocationClient;
 import com.example.entity.OrderClientEntity;
 import com.example.entity.ProfileEntity;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,24 +57,24 @@ public class TransportUslugaController {
 
     public void handler(Message message) {
 
-        var transportStep = saveUser(message.getChatId());
         var mainStep = mainController.saveUser(message.getChatId());
+        var transportStep = saveUser(message.getChatId());
 
         if (message.hasText()) {
 
-
-            if (transportStep.getStep() == null) {
-                transportStep.setStep(Step.TRANSPORT);
-            }
-
             switch (transportStep.getStep()) {
+
                 case TRANSPORT -> {
+
                     switch (message.getText()) {
 
                         case ButtonName.priceList -> transportService.priceData(message);
+
                         case ButtonName.orderCar -> {
-                          Integer messageId = myTelegramBot.send(SendMsg.sendPhotoCarInfo(message.getChatId(), "Характеристики  ✅")).getMessageId();
-                            transportService.guideOrderCar(message,messageId);
+                            Integer messageId = myTelegramBot.send
+                                    (SendMsg.sendPhotoCarInfo(message.getChatId(),
+                                            "Характеристики  ✅")).getMessageId();
+                            transportService.guideOrderCar(message, messageId);
                         }
                         case ButtonName.document -> {
                             transportService.documentData(message);
@@ -84,16 +86,22 @@ public class TransportUslugaController {
                         }
                     }
                 }
+
                 case DOCUMENT -> {
+
                     switch (message.getText()) {
+
                         case ButtonName.backTransportMenu -> {
                             mainService.transportMenu(message);
                             transportStep.setStep(Step.TRANSPORT);
                         }
+
                         case ButtonName.dataCar -> mainService.dataCar(message);
                         case ButtonName.dataDriver -> mainService.dataVoditel(message);
+
                     }
                 }
+
                 case GETPHONE -> {
 
                     if (transportService.checkPhone(message)) {
@@ -101,6 +109,7 @@ public class TransportUslugaController {
                         transportStep.setStep(Step.CHECKSMS);
                     }
                 }
+
                 case CHECKSMS -> {
                     if (checkSmsCode(message)) {
                         transportService.getFullName(message.getChatId());
@@ -110,6 +119,7 @@ public class TransportUslugaController {
                                 "*Код подтверждения неверен. Пожалуйста, введите повторно*"));
                     }
                 }
+
                 case GETFULLNAME -> {
 
                     Optional<OrderClientEntity> optional = orderClientRepository.findTop1ByChatIdAndStatusAndIsVisibleTrueAndPhoneIsNotNullOrderByOrderDateDesc(message.getChatId(), Status.NOTACTIVE);

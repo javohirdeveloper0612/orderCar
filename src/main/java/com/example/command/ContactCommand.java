@@ -36,7 +36,7 @@ public class ContactCommand {
                         Button.rowList(
                                 Button.row(
                                         Button.button(
-                                                ButtonName.backMainMenuGlavniy
+                                                ButtonName.backMainMenu
                                         )
                                 )
                         )

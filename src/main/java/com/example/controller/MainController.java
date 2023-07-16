@@ -53,34 +53,32 @@ public class MainController {
             var text = message.getText();
             var telegramUsers = saveUser(message.getChatId());
 
-            if(text.equals("/start")){
+
+            if (text.equals("/start")) {
                 mainService.mainMenu(message.getChatId());
+                telegramUsers.setStep(Step.MAIN);
             }
-            if(text.equals("/help")){
+            if (text.equals("/help")) {
                 helpCommand.helpCommand(message);
+                telegramUsers.setStep(Step.HELPCOMMAND);
             }
-            if(text.equals("/instruction")){
+            if (text.equals("/instruction")) {
                 instructionCommand.instructionCommand(message);
+                telegramUsers.setStep(Step.INSTRUCTIONCOMMAND);
             }
-            if(text.equals("/contact")){
+            if (text.equals("/contact")) {
                 contactCommand.contactCommand(message);
+                telegramUsers.setStep(Step.CONTACTCOMMAND);
             }
-            if(text.equals("/location")){
+            if (text.equals("/location")) {
                 locationCommand.locationCommand(message);
+                telegramUsers.setStep(Step.LOCATIONCOMMAND);
             }
-            if(text.equals("/created")){
+            if (text.equals("/created")) {
                 createdCommand.creativeTeamCommand(message);
+                telegramUsers.setStep(Step.CREATEDCOMMAND);
             }
 
-            if(text.equals(ButtonName.backMainMenuGlavniy)){
-                mainService.mainMenu(message.getChatId());
-                telegramUsers.setStep(Step.MAIN);
-            }
-
-
-            if (telegramUsers.getStep() == null) {
-                telegramUsers.setStep(Step.MAIN);
-            }
 
             if (telegramUsers.getStep().equals(Step.MAIN)) {
 
@@ -91,40 +89,61 @@ public class MainController {
                         telegramUsers.setStep(Step.TRANSPORT);
                     }
                     case ButtonName.metallBuyum -> {
-                        //metalbuyumcontroller
+                        //-> metalbuyumcontroller
                         mainService.metallBuyumMenu(message);
+                        telegramUsers.setStep(Step.METALBUYUM);
                     }
                     case ButtonName.metallprokat -> {
-                        //metallprokatcontroller
+                        //-> metallprokatcontroller
                         mainService.metalProkatMenu(message);
+                        telegramUsers.setStep(Step.METALLPROKAT);
                     }
                     case ButtonName.contact -> {
                         mainService.contact(message);
+                        telegramUsers.setStep(Step.CONTACT);
                     }
                     case ButtonName.location -> {
                         mainService.location(message);
+                        telegramUsers.setStep(Step.LOCATION);
                     }
                     case ButtonName.botinstruction -> {
                         botinstructionService.botInstruction(message);
+                        telegramUsers.setStep(Step.BOTINSTRUCTION);
                     }
 
                     case ButtonName.setting -> {
                         mainService.setting(message);
+                        telegramUsers.setStep(Step.SETTINGS);
                     }
 
                 }
+            }
 
-                //-> TransportController
+            if (text.equals(ButtonName.backMainMenu)) {
+                mainService.mainMenu(message.getChatId());
+                telegramUsers.setStep(Step.MAIN);
+            }
 
-            } else if (telegramUsers.getStep().equals(Step.TRANSPORT)) {
+
+            if (telegramUsers.getStep().equals(Step.TRANSPORT)) {
                 transportController.handler(message);
             }
 
-        } else if (message.hasContact()) {
-            transportController.handler(message);
-        } else if (message.hasLocation()) {
-            transportController.handler(message);
+
+            if (message.hasContact()) {
+
+                transportController.handler(message);
+
+            }
+
+            if (message.hasLocation()) {
+
+                transportController.handler(message);
+
+            }
+
         }
+
     }
 
 

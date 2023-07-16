@@ -37,7 +37,7 @@ public class CreatedCommand {
                         Button.rowList(
                                 Button.row(
                                         Button.button(
-                                                ButtonName.backMainMenuGlavniy
+                                                ButtonName.backMainMenu
                                         )
                                 )
                         )

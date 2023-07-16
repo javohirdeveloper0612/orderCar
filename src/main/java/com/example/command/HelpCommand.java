@@ -24,7 +24,7 @@ public class HelpCommand {
                         Button.rowList(
                                 Button.row(
                                         Button.button(
-                                                ButtonName.backMainMenuGlavniy
+                                                ButtonName.backMainMenu
                                         )
                                 )
                         )

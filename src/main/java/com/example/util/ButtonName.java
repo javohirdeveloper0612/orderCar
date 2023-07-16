@@ -6,10 +6,9 @@ public interface ButtonName {
     String metallprokat = "\uD83D\uDD51  Mеталлопрокат";
     String metallBuyum = "⚒  Mеталлo изделия";
     String priceList = "\uD83D\uDCB2  Прайс лист";
-    String backMainMenuGlavniy = "↩️  Главное меню";
     String orderCar = "\uD83D\uDE9A  Заказать машины";
     String document = "\uD83D\uDCC3  Документы";
-    String backMainMenu = "\uD83D\uDD19  Назад ";
+    String backMainMenu = "↩️  Главное меню";
     String backTransportMenu = "\uD83D\uDD19  Назад";
     String dataCar = "\uD83D\uDCC4  Транспортные  данные";
     String dataDriver = "\uD83D\uDCC4  Информация о водителе";

@@ -1,4 +1,5 @@
 package com.example.service;
+
 import com.example.mytelegram.MyTelegramBot;
 import com.example.util.Button;
 import com.example.util.ButtonName;
@@ -45,13 +46,35 @@ public class MainService {
     }
 
     public void metallBuyumMenu(Message message) {
+
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Эта функция скоро появится ! *"));
+                "*Эта функция скоро появится ! *",
+
+                Button.markup(
+                        Button.rowList(
+                                Button.row(
+                                        Button.button(
+                                                ButtonName.backMainMenu
+                                        )
+                                )
+                        )
+                )));
     }
 
     public void metalProkatMenu(Message message) {
+
         myTelegramBot.send(SendMsg.sendMsg(message.getChatId(),
-                "*Эта функция будет доступна в ближайшее время *"));
+                "*Эта функция будет доступна в ближайшее время *",
+
+                Button.markup(
+                        Button.rowList(
+                                Button.row(
+                                        Button.button(
+                                                ButtonName.backMainMenu
+                                        )
+                                )
+                        )
+                )));
     }
 
 
@@ -69,6 +92,7 @@ public class MainService {
     }
 
     public void contact(Message message) {
+
         myTelegramBot.send(SendMsg.sendMsgParse(message.getChatId(),
                 "*\uD83D\uDCCC Присылайте нам свои вопросы, жалобы, обращения \uD83D\uDCF2\n" +
                         "  Наши специалисты ответят вам в ближайшее время. \uD83D\uDCDD *" +
@@ -80,7 +104,17 @@ public class MainService {
                         "\n\nТелефоны для связи:" +
                         "" +
                         "\n \uD83D\uDCF2 ++998 99 820 70 74" +
-                        "\n \uD83D\uDCF2 ++998 90 332 16 11"));
+                        "\n \uD83D\uDCF2 ++998 90 332 16 11",
+
+                Button.markup(
+                        Button.rowList(
+                                Button.row(
+                                        Button.button(
+                                                ButtonName.backMainMenu
+                                        )
+                                )
+                        )
+                )));
     }
 
     public void location(Message message) {
@@ -96,8 +130,19 @@ public class MainService {
     }
 
     public void setting(Message message) {
+
         myTelegramBot.send(
-                SendMsg.sendMsg(message.getChatId(), "*Эта функция скоро появится*")
+                SendMsg.sendMsg(message.getChatId(), "*Эта функция скоро появится*",
+
+                        Button.markup(
+                                Button.rowList(
+                                        Button.row(
+                                                Button.button(
+                                                        ButtonName.backMainMenu
+                                                )
+                                        )
+                                )
+                        ))
         );
     }
 }
